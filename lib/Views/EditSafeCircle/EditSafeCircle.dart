@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:packageguard/Utils/app_colors.dart';
 import 'package:packageguard/Utils/app_images.dart';
+import 'package:packageguard/Views/AddSafePerson/addsafe_circleperson.dart';
 import 'package:packageguard/Widgets/custom_appbar.dart';
 import '../../Utils/app_constants.dart';
 import '../../Widgets/custom_sized_box.dart';
@@ -21,6 +22,11 @@ import '../EditSafeCircle/edit_safecircle.dart';
 import '../Login/login.dart';
 
 class EditSafeCircleMain extends StatefulWidget {
+
+  
+// Access user data
+  Map<String, dynamic> userData = {};
+
   final String name;
   final String email;
   // final String image;
@@ -34,6 +40,7 @@ class EditSafeCircleMain extends StatefulWidget {
 
 class _EditSafeCircleMainState extends State<EditSafeCircleMain> {
   File? imageFile;
+String receiverUserId='';
 
   getFromGallery() async {
     final ImagePicker _picker = ImagePicker();
@@ -79,9 +86,17 @@ class _EditSafeCircleMainState extends State<EditSafeCircleMain> {
   }
 
   Future<void> updateSafePersonInFirestore(String originalName,
-      String originalEmail, String newName, String newEmail) async {
+      String originalEmail, String newEmail, String newName) async {
+
+receiverUserId=await getReceiverUserId(originalEmail);
+
+
+print('receiver id is : ${receiverUserId}');
+
+
+
     final userRef =
-        FirebaseFirestore.instance.collection('safeCircle').doc(widget.name);
+        FirebaseFirestore.instance.collection('safeCircle').doc(userData['uid']).collection('circlePersons').doc(receiverUserId);
 
     // Check if the document exists
     final docSnapshot = await userRef.get();
@@ -89,8 +104,8 @@ class _EditSafeCircleMainState extends State<EditSafeCircleMain> {
     if (docSnapshot.exists) {
       // Update the user's data in Firestore
       await userRef.update({
-        'name': newName,
-        'email': newEmail,
+        'userEmail': newEmail,
+        'userName': newName,
       });
     } else {
       // Handle the case where the document doesn't exist
@@ -308,7 +323,8 @@ class _EditSafeCircleMainState extends State<EditSafeCircleMain> {
                                     widget.name,
                                     widget.email,
                                     emailController.text,
-                                    nameController.text);
+                                    nameController.text,
+                                    );
 
                                 // Show a snackbar
                                 AppConstants.showCustomSnackBar(
@@ -372,6 +388,24 @@ class _EditSafeCircleMainState extends State<EditSafeCircleMain> {
         ),
       ),
     ));
+  }
+ 
+   Future<String> getReceiverUserId(String userEmail) async {
+String userId='';
+     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('safeCircle')
+        .doc(userData['uid'])
+        .collection('circlePersons')
+        .where('userEmail', isEqualTo: userEmail)
+        .get();
+
+    for (QueryDocumentSnapshot doc in querySnapshot.docs) {
+      userId = doc.id;
+    
+      // Use 'await' here if needed
+    }
+
+    return userId;
   }
 
   Future<void> showOptionsDialog(BuildContext context) {

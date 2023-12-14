@@ -1,6 +1,9 @@
 import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/get_navigation.dart';
 import 'package:packageguard/Views/Home_Screen/home_screen.dart';
@@ -17,6 +20,9 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  Map<String, dynamic> userData = {};
+  String empty = '';
+  List<Map<String, dynamic>> devices = [];
   var token;
   @override
   getToken() async {
@@ -26,14 +32,51 @@ class _SplashScreenState extends State<SplashScreen> {
 
   void initState() {
     super.initState();
-    Timer(
-      const Duration(seconds: 3),
-      () {
-        getToken();
-        Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => token == null ? SignIn() : HomeScreen()));
-      },
-    );
+    isLogin(context);
+
+    // Timer(
+    //   const Duration(seconds: 3),
+    //   () {
+    //     getToken();
+    //     Navigator.of(context).push(MaterialPageRoute(
+    //         builder: (context) => token == null ? SignIn() : HomeScreen()));
+    //   },
+    // );
+  }
+
+  void isLogin(BuildContext context) {
+    final auth = FirebaseAuth.instance;
+    final user = auth.currentUser;
+    final userController = Get.find<UserController>(); // Get the controller
+    final userUidController =
+        Get.find<UserUidController>(); // Get the controller
+
+    if (user != null) {
+      Timer(Duration(seconds: 2), () async {
+        if (user.uid != null) {
+          final userDoc = await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .get();
+          if (userDoc.exists) {
+            final userData = userDoc.data();
+            print("logged in user data: ${userData}");
+
+            userUidController.setUID(user.uid);
+            userController.setUserData(userData!);
+          } else {
+            print("UID is null,unable to fetch user data");
+          }
+
+          print(
+              "going to Homescreen with the user: ${user.displayName} , ${user.email},${user.photoURL}");
+          Get.to(() => HomeScreen());
+        }
+      });
+    } else {
+      print("Going to login screen");
+      Get.to(() => SignIn());
+    }
   }
 
   @override

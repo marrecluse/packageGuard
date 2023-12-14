@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:packageguard/Views/Safe_Circle_Notification/safe_circle_notification.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 import '../Utils/app_colors.dart';
@@ -54,12 +55,18 @@ class CustomAppBar extends StatelessWidget {
                             child: CircleAvatar(
                               radius: 25.r,
                               child: ClipOval(
-                                child: Image.network(
+                                child: userData['method']=='emailAndPass' ? 
+                                Image.network(
                                   image
                                       .toString(), // Use the network URL directly
                                   height: 50.h,
                                   width: 50.h,
                                   fit: BoxFit.cover,
+                                ) : Image(image: NetworkImage(image,
+                                ),
+                                height: 50.h,
+                                width: 50.h,
+                                fit: BoxFit.cover,
                                 ),
                               ),
                             ),
@@ -87,7 +94,7 @@ class CustomAppBar extends StatelessWidget {
                                 SizedBox(height: 6.w),
                                 SizedBox(
                                   child: SizedBox(
-                                    width: context.screenWidth * .21,
+                                    width: context.screenWidth * .61,
                                     child: CustomText(
                                       title: title,
                                       fontSize: 14.sp,

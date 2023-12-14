@@ -24,9 +24,11 @@ class ProfilePage extends StatefulWidget {
 }
 
 bool onoff1 = true;
+bool pushAllowed = true;
 bool onoff2 = true;
 bool onoff3 = true;
 bool isLoader = false;
+
 
 class _ProfilePageState extends State<ProfilePage> {
   File? imageFile;
@@ -387,6 +389,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           onChanged: (value) {
                             setState(() {
                               onoff1 = !onoff1;
+                              pushAllowed=!pushAllowed;
                             });
                           },
                         )

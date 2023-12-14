@@ -15,8 +15,9 @@ class LabelText extends StatelessWidget {
         title,
         textAlign: TextAlign.left,
         style: TextStyle(
+                    fontFamily: 'Montserrat',
+
           fontSize: 13.sp,
-          fontFamily: 'Inter',
           fontWeight: FontWeight.w700,
           color: AppColors.text1color,
         ),

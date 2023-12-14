@@ -34,6 +34,9 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  var email = prefs.getString("email");
+  print(email);
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -77,13 +80,16 @@ class MyApp extends StatelessWidget {
               Get.lazyPut(() => WifiController());
               Get.lazyPut(() => UserController());
               Get.lazyPut(() => UserUidController());
-              Get.lazyPut(() => ConnectedDevicesController());
+              Get.put(ConnectedDevicesController());
 
               Get.put(() => BluetoothController());
               Get.put(BluetoothController());
               Get.put(() => AnimationController);
+            
             },
           ),
+          
+          getPages: [GetPage(name: '/home', page: () => HomeScreen())],
         );
       },
     );

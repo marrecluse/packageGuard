@@ -1,7 +1,6 @@
 // ignore_for_file: must_be_immutable, unused_local_variable
 
 import 'dart:async';
-import 'dart:ffi';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';

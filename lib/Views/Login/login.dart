@@ -1,9 +1,16 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:get/get.dart';
+import 'package:packageguard/Views/profile_image_service.dart';
+import 'package:sign_in_button/sign_in_button.dart';
+
 import 'package:packageguard/Utils/app_constants.dart';
 import 'package:packageguard/Views/DeviceDetails/device_detail.dart';
 import 'package:packageguard/Views/Forgot_Password/forgot_password.dart';
@@ -52,6 +59,16 @@ class _SignInState extends State<SignIn> {
     userData = userController.userData as Map<String, dynamic>;
   }
 
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  User? _user;
+
+  GoogleSignIn googleSignIn = GoogleSignIn(
+    scopes: [
+      'email',
+      'https://www.googleapis.com/auth/contacts.readonly',
+    ],
+  );
+
   void getToken() async {
     await FirebaseMessaging.instance.getToken().then((token) {
       setState(() {
@@ -66,7 +83,65 @@ class _SignInState extends State<SignIn> {
     await prefs.setString('deviceToken', '${deviceToken}');
   }
 
-  Future<void> signIn() async {
+  showAlertDialog(BuildContext context) {
+    AlertDialog alert = AlertDialog(
+      content: new Row(
+        children: [
+          CircularProgressIndicator(),
+          Container(margin: EdgeInsets.only(left: 5), child: Text("Loading")),
+        ],
+      ),
+    );
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
+  // void _handleGoogleSignIn() async {
+  //   final firestore = FirebaseFirestore.instance; // Initialize Firestore
+  //   final userController = Get.find<UserController>(); // Get the controller
+  //   final userUidController =
+  //       Get.find<UserUidController>(); // Get the controller
+
+  //   try {
+  //     GoogleAuthProvider _googleAuthProvider = GoogleAuthProvider();
+  //     UserCredential userCredential =
+  //         await _auth.signInWithProvider(_googleAuthProvider);
+  //     User? user = userCredential.user;
+  //     await firestore.collection('users').doc(user?.uid).update({
+  //       'deviceToken': deviceToken,
+  //     });
+
+  //     Get.toNamed(
+  //       '/home',
+  //       arguments: userCredential,
+  //     );
+  //   } catch (error) {
+  //     print(error);
+  //   }
+  // }
+  Future<String?> uploadImageToFirebaseStorage(File imageFile) async {
+    try {
+      final Reference storageReference = FirebaseStorage.instance
+          .ref()
+          .child('profile_images')
+          .child('${DateTime.now().millisecondsSinceEpoch}.jpg');
+
+      final UploadTask uploadTask = storageReference.putFile(imageFile);
+      await uploadTask;
+      final String imageUrl = await storageReference.getDownloadURL();
+      return imageUrl;
+    } catch (e) {
+      print('Error uploading image: $e');
+      return null;
+    }
+  }
+
+  Future<void> _handleGoogleSignIn() async {
     final auth = FirebaseAuth.instance;
     final firestore = FirebaseFirestore.instance; // Initialize Firestore
     final userController = Get.find<UserController>(); // Get the controller
@@ -74,25 +149,39 @@ class _SignInState extends State<SignIn> {
         Get.find<UserUidController>(); // Get the controller
 
     try {
-      final UserCredential userCredential =
-          await auth.signInWithEmailAndPassword(
-        email: emailController.text,
-        password: passwordController.text,
-      );
+      GoogleAuthProvider _googleAuthProvider = GoogleAuthProvider();
+      UserCredential userCredential =
+          await _auth.signInWithProvider(_googleAuthProvider);
       User? user = userCredential.user;
+      await user?.updateProfile(displayName: user.displayName);
 
-      await firestore.collection('users').doc(user?.uid).update({
+      // await firestore.collection('users').doc(user?.uid).update({
+      //   'deviceToken': deviceToken,
+      // });
+      final uid = userCredential.user?.uid;
+      print("Image url: ${user!.photoURL}");
+      final userData = {
+        'Name': user.displayName,
+        'Email': user.email,
+        'phoneNumber': user!.phoneNumber! ?? '',
+        'Address': '',
+        'City': '',
+        'State': '',
+        'Cell phone': '',
+        'Zip code': '',
         'deviceToken': deviceToken,
-      });
+        'Country': '',
+        'ProfileImage': user!.photoURL! ?? '',
+        'uid': uid,
+        'method':'emailAndPass'
+
+        // Use imageUrl directly
+      };
+      await firestore.collection('users').doc(uid).set(userData);
 
       // Sign-in was successful, navigate to the next page.
-      Get.to(() => const HomeScreen());
-
-      // You might want to show a success snackbar here.
-      AppConstants.showCustomSnackBar("Welcome Back!");
 
       // Retrieve the user's data from Firestore based on UID
-      final uid = userCredential.user?.uid;
 
       if (uid != null) {
         final userDoc = await firestore.collection('users').doc(uid).get();
@@ -109,6 +198,75 @@ class _SignInState extends State<SignIn> {
       } else {
         print("UID is null, unable to fetch user data from Firestore");
       }
+
+      Get.to(() => const HomeScreen());
+
+      // You might want to show a success snackbar here.
+      AppConstants.showCustomSnackBar("Welcome Back!");
+    } catch (e) {
+      // Sign-in failed, handle the error here.
+      print("Sign-in error: $e");
+
+      // Example: Show an error snackbar with GetX.
+      Get.snackbar(
+        'Sign-In Error',
+        'Please check your credentials',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    }
+  }
+
+  Future<void> signIn() async {
+    final auth = FirebaseAuth.instance;
+    final firestore = FirebaseFirestore.instance; // Initialize Firestore
+    final userController = Get.find<UserController>(); // Get the controller
+    final userUidController =
+        Get.find<UserUidController>(); // Get the controller
+
+    try {
+      print("in SignIN()");
+      final UserCredential userCredential =
+          await auth.signInWithEmailAndPassword(
+        email: emailController.text,
+        password: passwordController.text,
+      );
+      print("user credentials: $userCredential");
+      User? user = userCredential.user;
+      print("user is: $user");
+
+      await firestore.collection('users').doc(user?.uid).update({
+        'deviceToken': deviceToken,
+      });
+            print("user credentials: $deviceToken");
+
+   
+
+      // Retrieve the user's data from Firestore based on UID
+      final uid = userCredential.user?.uid;
+
+
+      if (uid != null) {
+        final userDoc = await firestore.collection('users').doc(uid).get();
+        if (userDoc.exists) {
+          final userData = userDoc.data();
+          print("User Data: $userData");
+
+          userUidController.setUID(uid); // Call setUID on UserUidController
+          // Save user data to the controller
+          userController.setUserData(userData!);
+             Get.to(() => const HomeScreen());
+      print("after HomeScreen");
+      // You might want to show a success snackbar here.
+      AppConstants.showCustomSnackBar("Welcome Back!");
+        } else {
+          print("User document not found in Firestore");
+        }
+      } else {
+        print("UID is null, unable to fetch user data from Firestore");
+      }
+
+      // Sign-in was successful, navigate to the next page.
     } catch (e) {
       // Sign-in failed, handle the error here.
       print("Sign-in error: $e");
@@ -128,7 +286,6 @@ class _SignInState extends State<SignIn> {
     // TODO: implement initState
     super.initState();
     getToken();
-    signIn();
   }
 
   @override
@@ -192,9 +349,13 @@ class _SignInState extends State<SignIn> {
                                   context.screenWidth > 900 ? 80.h : 60.h),
                               backgroundColor: AppColors.green),
                           onPressed: () async {
+
                             signIn();
                             storeTheToken();
                             getCredentials();
+                            SharedPreferences pref =
+                                await SharedPreferences.getInstance();
+                            pref.setString("email", emailController.text);
                           },
                           child: CustomText(
                             title: "Submit",
@@ -224,6 +385,18 @@ class _SignInState extends State<SignIn> {
                         color: AppColors.black,
                       )),
                     ),
+                    SizedBox(
+                      height: context.screenWidth * 0.3,
+                    ),
+                    Center(
+                        child:
+                            SignInButton(Buttons.google, onPressed: () async {
+                      _handleGoogleSignIn();
+
+                      SharedPreferences pref =
+                          await SharedPreferences.getInstance();
+                      pref.setString("email", _user!.email!);
+                    })),
                   ],
                 ),
               ),

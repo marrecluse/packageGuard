@@ -7,7 +7,6 @@ import 'package:packageguard/Views/AddPackageGuard/add_packgard.dart';
 import 'package:packageguard/Views/Home_Screen/home_screen.dart';
 import 'package:packageguard/Views/Register/register.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../Views/AddSafePerson/addsafe_circleperson.dart';
 import '../Views/EditSafeCircle/edit_safecircle.dart';
 import '../Views/Login/login.dart';
@@ -165,9 +164,11 @@ class _MyDrawerState extends State<MyDrawer> {
               fontSize: 14.sp,
               fontWeight: FontWeight.w500,
             ),
-            onTap: () {
+            onTap: () async{
               RemoveToken();
               RemoveUser();
+              SharedPreferences pref = await SharedPreferences.getInstance();
+            pref.remove("email");
               Get.off(() => SignIn());
             },
           ),

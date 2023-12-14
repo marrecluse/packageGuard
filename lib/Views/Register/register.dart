@@ -8,7 +8,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/get_navigation.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:packageguard/Utils/app_images.dart';
+import 'package:packageguard/Views/Home_Screen/home_screen.dart';
+import 'package:packageguard/Views/Register/registerWithGoogle.dart';
+import 'package:packageguard/Widgets/custom_container.dart';
 import '../../Utils/app_colors.dart';
 import '../../Utils/app_constants.dart';
 import '../../Widgets/custom_sized_box.dart';
@@ -30,6 +35,13 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
+  GoogleSignIn _googleSignIn = GoogleSignIn(scopes: <String>[
+    'email',
+    'https://www.googleapis.com/auth/contacts.readonly'
+  ]);
+
+  late GoogleSignInAccount _currentUser;
+
   bool isRegistered = false;
   String? deviceToken = '';
   File? imageFile;
@@ -47,6 +59,37 @@ class _SignUpState extends State<SignUp> {
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   // // Function to handle user registration
+
+  Future<void> checkAndCreateUserInFirestore(User user) async {
+    final CollectionReference usersCollection =
+        FirebaseFirestore.instance.collection('users');
+
+    final userData = await usersCollection.doc(user.uid).get();
+
+    if (!userData.exists) {
+      // If user document doesn't exist, create a new one
+      await usersCollection.doc(user.uid).update({
+        'Name': user.displayName ?? 'No name',
+        'Email': user.email,
+
+        // Add other user details you want to store
+      });
+    }
+  }
+
+  void _handleGoogleSignIn() async {
+    try {
+      GoogleAuthProvider _googleAuthProvider = GoogleAuthProvider();
+      _auth.signInWithProvider(_googleAuthProvider);
+
+      if (_user!.email != '') {
+        print("asfs:${_user!.email}");
+      }
+    } catch (error) {
+      print(error);
+    }
+  }
+
   Future<void> registerUser(FirebaseFirestore firestore) async {
     String imageUrl = ''; // Initialize imageUrl with an empty string
 
@@ -79,6 +122,7 @@ class _SignUpState extends State<SignUp> {
         'Country': countrycontroller.text,
         'ProfileImage': imageUrl,
         'uid': user?.uid,
+        'method': 'emailAndPass'
 
         // Use imageUrl directly
       };
@@ -86,14 +130,21 @@ class _SignUpState extends State<SignUp> {
       await firestore.collection('users').doc(user?.uid).set(userData);
 
       // Show a success message
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("Registered Successfully!"),
-      ));
+      // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      //   content: Text("Registered Successfully!"),
+      // ));
+      AppConstants.showCustomSnackBar("Registered Successfully!");
     } catch (e) {
       // Handle the error and show an error message
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("Registration Failed: $e"),
-      ));
+      // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      //   content: Text("Registration Failed: $e"),
+      // ));
+      Get.snackbar(
+        'Registration Failed',
+        'Please check the fields',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
     }
   }
 
@@ -147,17 +198,45 @@ class _SignUpState extends State<SignUp> {
     });
   }
 
+  Future<void> handleSignIn() async {
+    try {
+      await _googleSignIn.signIn();
+    } catch (error) {
+      print("Sign In error:" + error.toString());
+    }
+  }
+
   // getDevices() async {
   //   final ref = FirebaseDatabase.instance.ref('devices/');
   //   DatabaseEvent event = await ref.once();
   //   print("the data is ${event.snapshot.value}");
   // }
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  User? _user;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     getToken();
+    _auth.authStateChanges().listen((event) {
+      setState(() {
+        _user = event;
+      });
+    });
+
+    _googleSignIn.onCurrentUserChanged.listen((account) {
+      setState(() {
+        _currentUser = account!;
+      });
+
+      if (_currentUser != null) {
+        print('user is already authenticated');
+      }
+    });
+    _googleSignIn.signInSilently();
+
     // getDevices();
   }
 
@@ -178,16 +257,139 @@ class _SignUpState extends State<SignUp> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Center(
-                        child: CustomText(
-                          title: "Account Creation",
-                          fontSize: 20.sp,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.textColor,
+                        child: GestureDetector(
+                          onTap: () {},
+                          child: CustomText(
+                            title: "Account Creation",
+                            fontSize: 20.sp,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.textColor,
+                          ),
                         ),
                       ),
                       CustomSizeBox(height: 8.h),
 
-                      const Center(child: ContainerComponent()),
+                      // const Center(child: ContainerComponent()),
+                      Center(
+                        child: Column(
+                          children: [
+                            GestureDetector(
+                              onTap: () async {
+                                // _handleGoogleSignIn();
+                                handleSignIn();
+                                GoogleSignInAccount user = _currentUser;
+                                Get.to(GoogleSignUp(
+                                  userEmail: user.email,
+                                  userName: user.displayName!,
+                                  userImage: user.photoUrl!,
+                                ));
+                              },
+                              child: CustomContainer(
+                                  margin: EdgeInsets.only(top: 10.h),
+                                  height: 40.h,
+                                  width: 227.w,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(7.r),
+                                    border: Border.all(
+                                        color: AppColors.backgoundColor),
+                                    color: AppColors.backgoundColor,
+                                  ),
+                                  child: Padding(
+                                    padding: EdgeInsets.only(
+                                      left: 20.w,
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Image(
+                                            image: AssetImage(AppImages.google),
+                                            height: 18.h,
+                                            width: 18.w),
+                                        CustomSizeBox(width: 20.w),
+                                        CustomText(
+                                          title: "Sign up with Google",
+                                          fontSize: 13.sp,
+                                          fontWeight: FontWeight.w500,
+                                          color: AppColors.textColor,
+                                        ),
+                                      ],
+                                    ),
+                                  )),
+                            ),
+                            // CustomContainer(
+                            //     margin: EdgeInsets.only(top: 10.h),
+                            //     height: 40.h,
+                            //     width: 227.w,
+                            //     decoration: BoxDecoration(
+                            //       borderRadius: BorderRadius.circular(7.r),
+                            //       border:
+                            //           Border.all(color: AppColors.backgoundColor),
+                            //       color: AppColors.backgoundColor,
+                            //     ),
+                            //     child: Padding(
+                            //       padding: EdgeInsets.only(
+                            //         left: 20.w,
+                            //       ),
+                            //       child: Row(
+                            //         children: [
+                            //           Image(
+                            //               image: AssetImage(AppImages.linkedin),
+                            //               height: 18.h,
+                            //               width: 18.w),
+                            //           CustomSizeBox(width: 20.w),
+                            // //           GestureDetector(
+                            // //             onTap: () {
+                            // //               AppConstants.showCustomSnackBar(
+                            // //                   "Sign up with LinkedIn");
+                            // //             },
+                            // //             child: CustomText(
+                            // //               title: "Sign up with LinkedIn",
+                            // //               fontSize: 13.sp,
+                            // //               fontWeight: FontWeight.w500,
+                            // //               color: AppColors.textColor,
+                            // //             ),
+                            // //           ),
+                            // //         ],
+                            // //       ),
+                            // //     )),
+                            // // GestureDetector(
+                            // //   onTap: () {
+                            // //     AppConstants.showCustomSnackBar(
+                            // //         "Sign up with Facebook");
+                            // //   },
+                            // //   child: CustomContainer(
+                            // //       margin: EdgeInsets.only(top: 10.h),
+                            // //       height: 40.h,
+                            // //       width: 227.w,
+                            // //       decoration: BoxDecoration(
+                            // //         borderRadius: BorderRadius.circular(7.r),
+                            // //         border: Border.all(
+                            // //             color: AppColors.backgoundColor),
+                            // //         color: AppColors.backgoundColor,
+                            // //       ),
+                            // //       child: Padding(
+                            // //         padding: EdgeInsets.only(
+                            // //           left: 20.w,
+                            // //         ),
+                            // //         child: Row(
+                            // //           children: [
+                            // //             Image(
+                            // //                 image: AssetImage(AppImages.facbook),
+                            // //                 height: 18.h,
+                            // //                 width: 18.w),
+                            // //             CustomSizeBox(width: 20.w),
+                            // //             CustomText(
+                            // //               title: "Sign up with Facebook",
+                            // //               fontSize: 13.sp,
+                            // //               fontWeight: FontWeight.w500,
+                            // //               color: AppColors.textColor,
+                            // //             ),
+                            // //           ],
+                            // //         ),
+                            // //       )),
+                            // // ),
+                          ],
+                        ),
+                      ),
                       LabelText(title: "Name"),
                       CustomSizeBox(height: 5.h),
                       CustomTextFoamField(
@@ -449,6 +651,35 @@ class _SignUpState extends State<SignUp> {
           )),
         );
       },
+    );
+  }
+
+  Widget _userInfo() {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          Container(
+            height: 100,
+            width: 100,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: NetworkImage(_user!.photoURL!),
+              ),
+            ),
+          ),
+          Text(_user!.email!),
+          Text(_user!.displayName ?? ""),
+          MaterialButton(
+            color: Colors.red,
+            child: const Text("Sign Out"),
+            onPressed: _auth.signOut,
+          )
+        ],
+      ),
     );
   }
 }

@@ -27,7 +27,7 @@ class DeviceDetails extends StatefulWidget {
   State<DeviceDetails> createState() => _DeviceDetailsState();
 }
 
-final ConnectedWifi = Get.find<ConnectedDevicesController>();
+final ConnectedDevicesController _controller = Get.find<ConnectedDevicesController>();
 
 final userController = Get.find<UserController>();
 Map<String, dynamic> userData = {};
@@ -558,7 +558,7 @@ class _DeviceDetailsState extends State<DeviceDetails>
                                                   imgHeight: 20,
                                                   imgWidth: 20,
                                                   toptext: 'Connected to',
-                                                  btnText: ConnectedWifi
+                                                  btnText: _controller
                                                       .connectedDevices.keys
                                                       .toString(),
                                                   tFontWeight: FontWeight.w400,

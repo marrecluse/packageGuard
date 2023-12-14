@@ -46,6 +46,67 @@ class _EditSafeCircleState extends State<EditSafeCircle> {
     print(userData['ProfileImage']);
   }
 
+
+
+
+
+//with accept functionality
+
+//  void fetchSafeCircleUsers() {
+//   User? user = FirebaseAuth.instance.currentUser;
+
+//   FirebaseFirestore.instance
+//       .collection('safeCircle')
+//       .doc(user?.uid)
+//       .collection('circlePersons')
+//       .get()
+//       .then((QuerySnapshot querySnapshot) async {
+//         List<String> acceptedUserIds = [];
+
+//         // Fetch user IDs that have 'accept' status as true from the 'acceptStatus' collection
+//         QuerySnapshot acceptStatusQuery = await FirebaseFirestore.instance
+//             .collection('status')
+//             .where('acceptStatus', isEqualTo: true)
+//             .get();
+
+//         acceptedUserIds = acceptStatusQuery.docs.map((doc) => doc.id).toList();
+
+//         List<SafeCircleUser> users = [];
+
+//         querySnapshot.docs.forEach((doc) {
+//           final data = doc.data() as Map<String, dynamic>;
+
+//           final userId = doc.id;
+
+//           if (acceptedUserIds.contains(userId)) {
+//             final name = data['userName'] as String?;
+//             final email = data['userEmail'] as String?;
+//             final image = data['image'] as String;
+
+//             if (name != null && email != null) {
+//               users.add(SafeCircleUser(
+//                 userName: name,
+//                 userEmail: email,
+//                 userImage: image,
+//               ));
+//             }
+//           }
+//         });
+
+//         setState(() {
+//           // Update the state with the fetched users
+//           safeCircleUsers = users;
+//         });
+//       })
+//       .catchError((error) {
+//         // Handle any potential errors here
+//         print("Error fetching SafeCircle data: $error");
+//       });
+// }
+
+ 
+ 
+ 
   void fetchSafeCircleUsers() {
     User? user = FirebaseAuth.instance.currentUser;
 
@@ -57,16 +118,21 @@ class _EditSafeCircleState extends State<EditSafeCircle> {
         .then((QuerySnapshot querySnapshot) {
       List<SafeCircleUser> users = [];
       querySnapshot.docs.forEach((doc) {
+     
+
         final data = doc.data() as Map<String, dynamic>;
+
+
         final name = data['userName'] as String?;
         final email = data['userEmail'] as String?;
         final image = data['image'] as String;
+        final acceptStatus = data['acceptStatus'] as bool;
 
         // print(image);
         print(name);
         print(email);
 
-        if (name != null && email != null) {
+        if (name != null && email != null && acceptStatus ==true) {
           // Create a SafeCircleUser object and add it to the list
           users.add(SafeCircleUser(
               userName: name, userEmail: email, userImage: image));
@@ -77,7 +143,8 @@ class _EditSafeCircleState extends State<EditSafeCircle> {
         // Update the state with the fetched users
         safeCircleUsers = users;
       });
-    }).catchError((error) {
+    }
+    ).catchError((error) {
       // Handle any potential errors here
       print("Error fetching SafeCircle data: $error");
     });
@@ -170,6 +237,7 @@ class _EditSafeCircleState extends State<EditSafeCircle> {
                     child: ListView.builder(
                       itemCount: safeCircleUsers.length,
                       itemBuilder: (context, index) {
+                        
                         final user = safeCircleUsers[index];
 
                         return Container(

@@ -1,11 +1,14 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:packageguard/Views/AddPackageGuard/Bluetooth.dart';
+import 'package:packageguard/Views/Wifi_Connect/wifi_connect.dart';
 import 'package:packageguard/Widgets/custom_appbar.dart';
+import 'package:velocity_x/velocity_x.dart';
 import '../../Utils/app_colors.dart';
 import '../../Widgets/custom_text.dart';
 import '../../Widgets/drawer.dart';
@@ -22,7 +25,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final userController = Get.find<UserController>();
+  
+
 
 // Access user data
   Map<String, dynamic> userData = {};
@@ -76,16 +80,25 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     getAlarmStatus();
+            final userController = Get.find<UserController>();
+
+
 
     // Access user data in initState or another method
     userData = userController.userData as Map<String, dynamic>;
-    print(userData);
-    print(userData['ProfileImage']);
+    print('user details are: $userData');
+    print('user profile ${userData['ProfileImage']}');
   }
 
   @override
   Widget build(BuildContext context) {
     final profileImage = userData['ProfileImage'].toString().trim();
+    
+ UserCredential? userCredential = Get.arguments as UserCredential?;
+    
+    String userEmail = userCredential?.user?.email ?? 'No email available';
+    String userName = userCredential?.user?.displayName ?? 'No name available';
+    String guserPicture = userCredential?.user?.photoURL ?? 'No picture available';
 
     return SafeArea(
       child: Scaffold(
@@ -94,7 +107,8 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             children: [
               CustomAppBar(
-                image: profileImage,
+                image:profileImage,
+                // image: userData['method']=='emailAndPass' ? emailprofileImage : guserPicture,
                 title: '${userData['Name'] ?? 'User'} ',
 
                 // title: 'Abdul',
@@ -105,6 +119,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     NotificationSection(),
                     SizedBox(height: 12.h),
+                    
                     GestureDetector(
                       onTap: () {
                         Get.to(() => BluetoothPage());

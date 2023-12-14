@@ -24,11 +24,12 @@ class CustomText extends StatelessWidget {
       title,
       textAlign: textAlign,
       style: TextStyle(
+          fontFamily: 'Montserrat',
           fontSize: fontSize,
           fontWeight: fontWeight,
           letterSpacing: 0.7,
           color: color,
-          fontFamily: 'Inter',
+        
           decoration: decoration),
     );
   }
@@ -57,11 +58,12 @@ class CustomText2 extends StatelessWidget {
       title as String,
       textAlign: textAlign,
       style: TextStyle(
+                  fontFamily: 'Montserrat',
+
           fontSize: fontSize,
           fontWeight: fontWeight,
           letterSpacing: 0.7,
           color: color,
-          fontFamily: 'Inter',
           decoration: decoration),
     );
   }
