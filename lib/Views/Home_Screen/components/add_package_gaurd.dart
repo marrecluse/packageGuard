@@ -31,86 +31,93 @@ class _AddPackageGaurdState extends State<AddPackageGaurd>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
 
-  // bool status = true;
-  // List<Map<String, dynamic>> devices = [];
-  // bool isLoading = true; // Set loading to false in case of an error
-  // Future<void> fetchDevices() async {
-  //   final firestore = FirebaseFirestore.instance;
-  //   final userUidController = Get.find<UserUidController>();
-  //   // final uid = userUidController.uid.value; // Assuming you are storing the user's UID in this controller
+  bool status = true;
+  List<Map<String, dynamic>> devices = [];
+  bool isLoading = true; // Set loading to false in case of an error
+  Future<void> fetchDevices() async {
+    final firestore = FirebaseFirestore.instance;
+    final userUidController = Get.find<UserUidController>();
+    // final uid = userUidController.uid.value; // Assuming you are storing the user's UID in this controller
 
-  //   final uid = 'tnmNVyaT4LNeDWgo8kl2vILkE2m2';
-  //   try {
-  //     final devicesCollection = firestore.collection('devices');
-  //     final querySnapshot = await devicesCollection.get();
+    final uid = 'tnmNVyaT4LNeDWgo8kl2vILkE2m2';
+    try {
+      final devicesCollection = firestore.collection('devices');
+      final querySnapshot = await devicesCollection.get();
 
-  //     if (querySnapshot.docs.isNotEmpty) {
-  //       List<Map<String, dynamic>> filteredDevices = [];
+      if (querySnapshot.docs.isNotEmpty) {
+        List<Map<String, dynamic>> filteredDevices = [];
 
-  //       for (var document in querySnapshot.docs) {
-  //         final deviceData = document.data() as Map<String, dynamic>;
+        for (var document in querySnapshot.docs) {
+          final deviceData = document.data() as Map<String, dynamic>;
 
-  //         // Check if the "userId" matches your UID
-  //         if (deviceData['userId'] == uid) {
-  //           filteredDevices.add(deviceData);
-  //         }
-  //       }
+          // Check if the "userId" matches your UID
+          if (deviceData['userId'] == uid) {
+            filteredDevices.add(deviceData);
+          }
+        }
 
-  //       if (filteredDevices.isNotEmpty) {
-  //         setState(() {
-  //           devices.addAll(filteredDevices);
-  //           isLoading = false; // Set loading to false in case of an error
-  //           print("DEVICES ; ${devices}");
-  //         });
-  //       } else {
-  //         print("No devices found in Firestore for UID: $uid");
-  //         isLoading = false; // Set loading to false in case of an error
-  //       }
-  //     } else {
-  //       print("No devices found in Firestore for UID: $uid");
-  //       isLoading = false; // Set loading to false in case of an error
-  //     }
-  //   } catch (e) {
-  //     print("Error fetching devices: $e");
-  //     isLoading = false; // Set loading to false in case of an error
-  //   }
-  // }
+        if (filteredDevices.isNotEmpty) {
+          setState(() {
+            devices.addAll(filteredDevices);
+            isLoading = false; // Set loading to false in case of an error
+            print("DEVICES are ; ${devices}");
+          });
+        } else {
+          print("No devices found in Firestore for UID: $uid");
+          isLoading = false; // Set loading to false in case of an error
+        }
+      } else {
+        print("No devices found in Firestore for UID: $uid");
+        isLoading = false; // Set loading to false in case of an error
+      }
+    } catch (e) {
+      print("Error fetching devices: $e");
+      isLoading = false; // Set loading to false in case of an error
+    }
+  }
 
-  // Future<void> updateDeviceStatus(String deviceId, bool isArmed) async {
-  //   final firestore = FirebaseFirestore.instance;
-  //   final userUidController = Get.find<UserUidController>();
-  //   // final uid = userUidController.uid.value;
-  //   final uid = 'tnmNVyaT4LNeDWgo8kl2vILkE2m2';
 
-  //   try {
-  //     final devicesCollection = firestore.collection('devices');
-  //     final querySnapshot =
-  //         await devicesCollection.where('deviceId', isEqualTo: deviceId).get();
 
-  //     if (querySnapshot.docs.isNotEmpty) {
-  //       debugPrint('I am here');
 
-  //       final deviceDocument = querySnapshot.docs.first;
-  //       final deviceData = deviceDocument.data() as Map<String, dynamic>;
 
-  //       // Check if the "userId" matches your UID
-  //       if (deviceData['userId'] == uid) {
-  //         // Update the 'status' field based on 'isArmed' value
-  //         await deviceDocument.reference.update({
-  //           'status': isArmed ? 'armed' : 'disarmed',
-  //         });
 
-  //         // You can add additional logic here if needed
-  //       }
-  //     }
-  //   } catch (e) {
-  //     print("Error updating device status: $e");
-  //   }
-  // }
+  Future<void> updateDeviceStatus(String deviceId, bool isArmed) async {
+    final firestore = FirebaseFirestore.instance;
+    final userUidController = Get.find<UserUidController>();
+    // final uid = userUidController.uid.value;
+    final uid = 'tnmNVyaT4LNeDWgo8kl2vILkE2m2';
+
+    try {
+      final devicesCollection = firestore.collection('devices');
+      final querySnapshot =
+          await devicesCollection.where('deviceId', isEqualTo: deviceId).get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        debugPrint('I am here');
+
+        final deviceDocument = querySnapshot.docs.first;
+        final deviceData = deviceDocument.data() as Map<String, dynamic>;
+
+        // Check if the "userId" matches your UID
+        if (deviceData['userId'] == uid) {
+          // Update the 'status' field based on 'isArmed' value
+          await deviceDocument.reference.update({
+            'status': isArmed ? 'armed' : 'disarmed',
+          });
+
+          // You can add additional logic here if needed
+        }
+      }
+    } catch (e) {
+      print("Error updating device status: $e");
+    }
+  }
+
+
   final ref = FirebaseDatabase.instance.ref('packageGuard/userId1/devices/');
 
   // bool isArmed = false;
-  String deviceId = '';
+  String deviceId = 'SN83C048DF9D4';
   String battery = '';
   bool armedstatus = false;
   bool? armedStatusFromSharedPreferences;
@@ -140,7 +147,7 @@ class _AddPackageGaurdState extends State<AddPackageGaurd>
 
         storeAlarmStatus(alarmStatus);
         if (alarmStatus) {
-          turnOnAlarm();
+          turnOnAlarm(deviceId);
           print("server: ${alarmStatus}");
         }
       });
@@ -155,23 +162,35 @@ class _AddPackageGaurdState extends State<AddPackageGaurd>
     });
   }
 
-  void turnOnAlarm() async {
+  void turnOnAlarm(String deviceId) async {
+
     DatabaseReference armedRef =
-        FirebaseDatabase.instance.ref("devices/SN83C048DF9D4_status/");
+        FirebaseDatabase.instance.ref().child('status').child(deviceId).child('alerts');
     await armedRef.update({
       "alarm": true,
     });
   }
 
-  void updateArmedStatus(bool isArmed, String deviceId) async {
-    // var deviceId= 'SN83C048DF9D4'; use variable when getting many devices
+  // void updateArmedStatus(bool isArmed, String deviceId) async {
+  //   // var deviceId= 'SN83C048DF9D4'; use variable when getting many devices
 
-    DatabaseReference armedRef =
-        FirebaseDatabase.instance.ref("packageGuard/deviceId1/data/alerts/");
+  //   DatabaseReference armedRef =
+  //       FirebaseDatabase.instance.ref("packageGuard/deviceId1/data/alerts/");
+  //   await armedRef.once();
+
+  //   await armedRef.update({
+  //     "armedStatus": isArmed,
+  //     // "alarm": true
+  //   });
+  // }
+    void updateArmedStatus(bool isArmed, String deviceId) async {
+    String deviceId= 'SN83C048DF9D4'; //use variable when getting many devices
+ DatabaseReference armedRef =
+        FirebaseDatabase.instance.ref().child('status').child(deviceId);
     await armedRef.once();
 
     await armedRef.update({
-      "armedStatus": isArmed,
+      "armed": isArmed,
       // "alarm": true
     });
   }
@@ -182,14 +201,37 @@ class _AddPackageGaurdState extends State<AddPackageGaurd>
   }
 
   bool? armedStatus;
-  void fetchArmedStatus() async {
-    // var deviceId= 'SN83C048DF9D4'; use variable when getting many devices
+  // void fetchArmedStatus() async {
+  //   // var deviceId= 'SN83C048DF9D4'; use variable when getting many devices
 
+  //   DatabaseReference ref =
+  //       FirebaseDatabase.instance.ref("packageGuard/deviceId1/data/alerts/");
+  //   DatabaseEvent event = await ref.once();
+  //   dynamic data = event.snapshot.value;
+  //   armedStatus = data['armedStatus'] as bool?;
+
+  //   armedstatus = armedStatus!;
+  //   print('the armed status value now is${armedstatus}');
+  //   setState(() {
+  //     switchValue = armedstatus ?? false;
+  //   });
+  //   _saveArmedStatusToSharedPreferences();
+  //   // print('the armed status is ${armedstatus}');
+  //   // Object? armedStatus = event.snapshot.value;
+
+  //   // DataSnapshot snapshot = (await ref.once()) as DataSnapshot;
+  // }
+
+    void fetchArmedStatus() async {
+    // var deviceId= 'SN83C048DF9D4'; use variable when getting many devices
+String deviceId='SN83C048DF9D4';
+    // DatabaseReference ref =
+    //     FirebaseDatabase.instance.ref("status/$deviceId/data/alerts/");
     DatabaseReference ref =
-        FirebaseDatabase.instance.ref("packageGuard/deviceId1/data/alerts/");
+        FirebaseDatabase.instance.ref().child('status').child(deviceId);
     DatabaseEvent event = await ref.once();
     dynamic data = event.snapshot.value;
-    armedStatus = data['armedStatus'] as bool?;
+    armedStatus = data['armed'] as bool?;
 
     armedstatus = armedStatus!;
     print('the armed status value now is${armedstatus}');
@@ -226,14 +268,14 @@ class _AddPackageGaurdState extends State<AddPackageGaurd>
     getAlarmStatus();
     fetchArmedStatus();
     _loadArmedStatusFromSharedPreferences();
-    // _timer = Timer.periodic(Duration(seconds: 1), (timer) {
-    //   fetchArmedStatus();
+    // Timer.periodic(Duration(seconds: 1), (timer) {
+      fetchArmedStatus();
     // });
     _animationController = AnimationController(
       vsync: this,
       duration: Duration(seconds: 5), // Adjust the duration as needed
     )..repeat();
-    // fetchDevices();
+    fetchDevices();
     // print("the connected wifi is ${ConnectedWifi[$ConnectedWifi]}");
 
     // Uncomment the next line if you want to start the animation immediately
@@ -283,12 +325,22 @@ class _AddPackageGaurdState extends State<AddPackageGaurd>
             } else {
               Map<dynamic, dynamic> map =
                   snapshot.data!.snapshot.value as dynamic;
+
+                  print("Map : $map");
               List list = map.keys.toList();
+                                print("list of map keys : $list");
+
               // print('the value of the $list is');
 
               Map deviceIds = map["deviceId1"];
+              print("deviceIds : $deviceIds");
 
-              Map deviceData = deviceIds['data'];
+              print("deviceIds1: ${map["deviceId1"]}");
+              print("deviceIds2: ${map["deviceId2"]}");
+
+              Map deviceData = deviceIds['data'];  
+              print("deviceData : $deviceData");   
+
               print('here the battery is ${deviceData['battery']}');
 
               Map data =

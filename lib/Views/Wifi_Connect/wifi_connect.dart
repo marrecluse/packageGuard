@@ -27,6 +27,7 @@ class ConnectedDevicesController extends GetxController {
   void updateConnectedDevice(String ssid, bool isConnected) {
     connectedDevices[ssid] = isConnected;
     print('the connected device is ${connectedDevices[ssid]}');
+    print('Devices are $connectedDevices');
   }
 }
 
@@ -285,6 +286,7 @@ class _WifiConnectState extends State<WifiConnect> {
                                     //   ),
                                     //   title: wifiTitle![index],
                                     // );
+
 
                                     return Column(
                                       children: [

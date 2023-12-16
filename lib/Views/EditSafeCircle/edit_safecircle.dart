@@ -195,7 +195,9 @@ class _EditSafeCircleState extends State<EditSafeCircle> {
       // });
 
       // After successfully deleting, refresh the list
-      fetchSafeCircleUsers();
+              fetchSafeCircleUsers();
+
+    
     } catch (error) {
       print("Error deleting Safe Circle user: $error");
     }

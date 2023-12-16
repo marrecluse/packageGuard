@@ -54,13 +54,15 @@ class AddSafePerson extends StatefulWidget {
 }
 
 class _AddSafePersonState extends State<AddSafePerson> {
+  bool isLoading = false;
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
   late AndroidNotificationChannel channel;
   late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
-  final ReceiverIdController receiverIdController = Get.put(ReceiverIdController());
+  final ReceiverIdController receiverIdController =
+      Get.put(ReceiverIdController());
 
   String? mtoken = "";
   String? device_token = "";
@@ -144,30 +146,33 @@ class _AddSafePersonState extends State<AddSafePerson> {
 // }
 // print(getCurrentUserId().toString());
 
-  Future<String> getReceiverUserId(String userEmail) async {
+  Future<String> getReceiverUserId(String userEmail, String currentUserEmail,
+      String receiverName, String senderName) async {
     String titleText =
         '${nameController.text.toString()}! has been added to your Safe Circle';
     String titleText2 =
         'You have added ${nameController.text.toString()} to your Safe Circle';
-    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-        .collection('users')
-        .where('Email', isEqualTo: userEmail)
-        .get();
 
-    for (QueryDocumentSnapshot doc in querySnapshot.docs) {
-      receiverUserId = doc.id;
-      receiverIdController.updateData(receiverUserId);
-      print('circle USER ID : $receiverUserId');
-      // saveUserNotificationToFirestore(emailController.text.toString(),
-      //     nameController.text.toString(), titleText);
-      saveCircleNotificationToFirestore(
-          emailController.text.toString(),
-          nameController.text.toString(),
-          titleText2,
-          receiverUserId,
-          userData['uid']);
-      await SavaSenderIdToFireStore(receiverUserId);
-      // Use 'await' here if needed
+    try {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .where('Email', isEqualTo: userEmail)
+          .get();
+
+      for (QueryDocumentSnapshot doc in querySnapshot.docs) {
+        receiverUserId = doc.id;
+        receiverIdController.updateData(receiverUserId);
+        print('circle USER ID : $receiverUserId');
+        // saveUserNotificationToFirestore(emailController.text.toString(),
+        //     nameController.text.toString(), titleText);
+
+        // sendPushMessageToTarget(
+        //                                   currentUserEmail,
+        //                                   receiverName,senderName);
+        // Use 'await' here if needed
+      }
+    } catch (e) {
+      print(e);
     }
 
     return receiverUserId;
@@ -196,15 +201,6 @@ class _AddSafePersonState extends State<AddSafePerson> {
         .doc(user?.uid)
         .collection("userNotification")
         .add(notificationData);
-  }
-
-  SavaSenderIdToFireStore(String receiverId) async {
-    User? user = await FirebaseAuth.instance.currentUser;
-    await FirebaseFirestore.instance
-        .collection('status')
-        .doc(receiverId)
-        .set({userId: user});
-    print('REciever ID is ${receiverId}');
   }
 
   void saveCircleNotificationToFirestore(String userEmail, String userName,
@@ -272,28 +268,23 @@ class _AddSafePersonState extends State<AddSafePerson> {
         .add(notificationData);
   }
 
-Future<String> getTargetDeviceToken(String targetEmail) async{
-  String targetToken='';
-  try {
-     DocumentSnapshot snap =
-                                      await FirebaseFirestore.instance
-                                          .collection("users")
-                                          .doc(receiverUserId)
-                                          .get();
+  Future<String> getTargetDeviceToken(
+      String targetEmail, String receiverUserId) async {
+    String targetToken = '';
+    try {
+      DocumentSnapshot snap = await FirebaseFirestore.instance
+          .collection("users")
+          .doc(receiverUserId)
+          .get();
 
-                                  targetToken = snap['deviceToken'];
-                                  print("target token is");
-                                  print(targetToken);
-
-  } catch (e) {
-    print(e);
+      targetToken = snap['deviceToken'];
+      print("target token is");
+      print(targetToken);
+    } catch (e) {
+      print(e);
+    }
+    return targetToken;
   }
-return targetToken;
-
-}
-
-
-
 
   void sendPushMessage(String token, String body, String title) async {
     try {
@@ -313,7 +304,6 @@ return targetToken;
               'icon':
                   'https://firebasestorage.googleapis.com/v0/b/packageguard-d517e.appspot.com/o/app_logo%2Fic_launcher.png?alt=media&token=aa85c460-d622-4243-8ca0-bf9d81ed683f' // This should point to the icon image
             },
-            'priority': 'high',
             'data': <String, dynamic>{
               'click_action': 'FLUTTER_NOTIFICATION_CLICK',
               'id': '1',
@@ -330,8 +320,30 @@ return targetToken;
     }
   }
 
+  void sendPushMessageToTarget(
+      String receiverEmail, String receiverName, String senderName) async {
+    String? targetDeviceToken;
 
-  void sendPushMessageToTarget(String targetToken,String receiverName) async {
+    //1 . Get Target userId
+    try {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .where('Email', isEqualTo: receiverEmail)
+          .get();
+      print('a');
+      if (querySnapshot.docs.isNotEmpty) {
+        print('b');
+        Map<String, dynamic> targetUserData =
+            querySnapshot.docs.first.data() as Map<String, dynamic>;
+
+        targetDeviceToken = targetUserData['deviceToken'] as String?;
+        print('tARget token is: $targetDeviceToken');
+      }
+      print('receiver name is: $receiverName');
+    } catch (e) {
+      print(e);
+    }
+
     try {
       await http.post(
         Uri.parse('https://fcm.googleapis.com/fcm/send'),
@@ -344,30 +356,26 @@ return targetToken;
           <String, dynamic>{
             'notification': <String, dynamic>{
               'title': 'PackageGuard',
-              'body': '$receiverName wants to add you in his safe circle',
+              'body': '$senderName wants to add you in his safe circle',
 
               'icon':
                   'https://firebasestorage.googleapis.com/v0/b/packageguard-d517e.appspot.com/o/app_logo%2Fic_launcher.png?alt=media&token=aa85c460-d622-4243-8ca0-bf9d81ed683f' // This should point to the icon image
             },
-            'priority': 'high',
             'data': <String, dynamic>{
               'click_action': 'FLUTTER_NOTIFICATION_CLICK',
               'id': '1',
               'status': 'done'
             },
-            'to': targetToken,
+            'to': targetDeviceToken,
             // 'to': 'vKcfGYBymuNngtOmoAf4tPpGNyd2',
           },
         ),
       );
-      print("here i am");
+      print("notification sent to target device");
     } catch (e) {
       print("error push notification");
     }
   }
-
-
-
 
   void requestPermission() async {
     FirebaseMessaging messaging = FirebaseMessaging.instance;
@@ -568,8 +576,7 @@ return targetToken;
             'image': imageUrl,
             'acceptStatus': false
           };
-          print('Device Token$mtoken');
-          print('User email$device_token ');
+          print('Device Token: $device_token ');
 
           final firestore = FirebaseFirestore.instance;
           // await firestore.collection('safeCircle').add(safeCircleData);
@@ -579,15 +586,22 @@ return targetToken;
               .collection('circlePersons')
               .doc(receiverUserId)
               .set(safeCircleData);
+          isLoading = false;
+
           AppConstants.showCustomSnackBar("Safe Circle request sent");
         } else {
+          isLoading = false;
           AppConstants.showCustomSnackBar("Failed to get admin's email");
         }
       } else {
+        isLoading = false;
+
         AppConstants.showCustomSnackBar("User not logged in");
       }
     } catch (e) {
       print('Error adding data to Firestore: $e');
+      isLoading = false;
+
       AppConstants.showCustomSnackBar("Error adding data to Firestore");
     }
   }
@@ -813,6 +827,10 @@ return targetToken;
                           alignment: Alignment.topRight,
                           child: GestureDetector(
                             onTap: () async {
+                              setState(() {
+                                isLoading = true;
+                              });
+
                               if (emailController.text.isNotEmpty &&
                                   nameController.text.isNotEmpty) {
                                 String name = '${userData['Name']}';
@@ -855,25 +873,49 @@ return targetToken;
                                     mailMessage:
                                         'Welcome to safe circle'.toString(),
                                   );
-                                  
 
                                   if (await checkIfExists(
                                       emailController.text)) {
-                                    sendPushMessage(token, titleText, bodyText);
-                                    // getPermit(emailController.text);
-                                   String targetDeviceToken=await getTargetDeviceToken(emailController.text);
-
-                                    sendPushMessageToTarget(targetDeviceToken,nameController.text);
-
                                     addPerson(
                                         recipientEmail:
                                             emailController.text.toString());
+
+                                    sendPushMessage(token, titleText, bodyText);
+                                    // getPermit(emailController.text);
+                                    String titleText2 =
+                                        'You have added ${nameController.text.toString()} to your Safe Circle';
+
+                                    String targetUserId =
+                                        await getReceiverUserId(
+                                            emailController.text.toString(),
+                                            emailController.text,
+                                            nameController.text,
+                                            userData['Name']);
+                                    print('Got target userId: $targetUserId');
+                                    saveCircleNotificationToFirestore(
+                                        emailController.text.toString(),
+                                        nameController.text.toString(),
+                                        titleText2,
+                                        targetUserId,
+                                        userData['uid']);
+                                    // String targetDeviceToken =
+                                    //     await getTargetDeviceToken(
+                                    //         emailController.text, targetUserId);
+                                    // print(
+                                    //     'Got target deviceToken : $targetDeviceToken');
+
+                                    Timer(Duration(seconds: 1), () {
+                                      sendPushMessageToTarget(
+                                          emailController.text,
+                                          nameController.text,
+                                          userData['Name']);
+                                    });
+
                                     saveUserNotificationToFirestore(
                                         emailController.text.toString(),
                                         nameController.text.toString(),
                                         titleText);
-                                    await getReceiverUserId(
-                                        emailController.text.toString());
+
                                     // saveCircleNotificationToFirestore(
                                     //   emailController.text.toString(),
                                     //   nameController.text.toString(),
@@ -890,6 +932,7 @@ return targetToken;
                                       "Email already exists");
                                 }
                               } else {
+                                isLoading = false;
                                 // Handle the case where email or phone is empty
                                 AppConstants.showCustomSnackBar(
                                     "Please fill in both email and phone.");
@@ -918,7 +961,9 @@ return targetToken;
                 ),
               ),
             ),
-            CustomSizeBox(height: 80.h),
+            CustomSizeBox(height: 30.h),
+            isLoading ? CircularProgressIndicator() : SizedBox(),
+            CustomSizeBox(height: 10.h),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 20.w),
               child: GestureDetector(
@@ -934,7 +979,7 @@ return targetToken;
                       borderRadius: BorderRadius.circular(8.r)),
                   child: Center(
                     child: CustomText(
-                      title: "Access Phone Contact",
+                      title: "Add Package Guard",
                       fontSize: 13.sp,
                       fontWeight: FontWeight.w500,
                       color: AppColors.white,

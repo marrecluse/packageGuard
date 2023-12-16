@@ -65,6 +65,7 @@ class _NotificationSectionState extends State<NotificationSection> {
               fontWeight: FontWeight.w700,
             ),
             SizedBox(height: 10.h),
+            
             StreamBuilder(
                 stream: ref.onValue,
                 builder: (context, AsyncSnapshot<DatabaseEvent> snapshot) {
@@ -73,10 +74,10 @@ class _NotificationSectionState extends State<NotificationSection> {
                   } else {
                     Map<dynamic, dynamic> map =
                         snapshot.data!.snapshot.value as dynamic;
-
                     Map deviceData = map['data'];
                     Map<dynamic, dynamic> alertsData = deviceData['alerts'];
                     // bool alarmStatus = alertsData['alarm'];
+print("abdul:deviceData :  $deviceData");
 
                     // debugPrint('the alarmdata is $alarmStatus');
 

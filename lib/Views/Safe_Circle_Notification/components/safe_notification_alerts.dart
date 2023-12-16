@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -19,6 +21,8 @@ class SafeNOtificationsAlerts2 extends StatefulWidget {
 }
 
 class _SafeNOtificationsAlerts2State extends State<SafeNOtificationsAlerts2> {
+    late Timer _timer;
+
   final userController = Get.find<UserController>();
   Map<String, dynamic> userData = {};
   User? user;
@@ -31,6 +35,11 @@ class _SafeNOtificationsAlerts2State extends State<SafeNOtificationsAlerts2> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    // Start the timer when the widget initializes
+    _timer = Timer.periodic(Duration(seconds: 2), (Timer t) {
+      // Call setState to rebuild the widget
+      setState(() {});
+    });
 
     fetchSafeCircleNotification();
     clearNotificationList();
@@ -173,7 +182,12 @@ try {
       isLoading = false; // Set loading to false in case of an error
     }
   }
-
+ @override
+  void dispose() {
+    // Dispose the timer when the widget is removed from the tree
+    _timer.cancel();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     
@@ -254,7 +268,7 @@ try {
 
                               Container(
                               height: context.screenWidth*0.1,
-                            width: context.screenWidth*0.19,
+                            width: 90,
                                 child: ElevatedButton(
                                   style: ElevatedButton.styleFrom(
                                       primary: Color(
@@ -271,6 +285,9 @@ try {
                                   },
                                   child: Text(
                                     'Accept',
+                                    style: TextStyle(
+                                      fontSize: 15
+                                    ),
                                   ),
                                 ),
                               ),
@@ -284,8 +301,8 @@ try {
                               ),
 
                                   Container(
-                            height: context.screenWidth*0.08,
-                            width: context.screenWidth*0.19,
+                            height: 35,
+                            width: 80,
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
                             
@@ -294,10 +311,14 @@ try {
                               onPressed: () async {
                                 accept= false;
                                 print("updating status");
-                                updateAcceptStatus(accept,notificationTitle);
+                                                                    deleteNotification(notificationTitle,index);
+
                               },
                               child: Text(
                                 'Reject',
+                                style: TextStyle(
+                                  fontSize: 14
+                                ),
                               ),
                             ),
                           ),

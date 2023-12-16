@@ -92,7 +92,7 @@ class _OrderPackageState extends State<OrderPackage> {
                         SizedBox(height: 10.h),
                         GestureDetector(
                           onTap: () {
-                            Get.to(BluetoothPage());
+                            // Get.to(BluetoothPage());
                           },
                           child: Align(
                             alignment: Alignment.topLeft,

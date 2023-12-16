@@ -52,12 +52,16 @@ Future<void> main() async {
   //   ),
   // );
   // await pushNotification().initNotifications();
-  await FirebaseMessaging.instance.getInitialMessage();
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
-  FirebaseMessaging.instance.getToken().then((fcmToken) {
-    print("FCM Token: $fcmToken");
-  });
+
+
+  // await FirebaseMessaging.instance.getInitialMessage();
+  // FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+
+  // FirebaseMessaging.instance.getToken().then((fcmToken) {
+  //   print("FCM Token: $fcmToken");
+  // });
 
   //  FirebaseAppCheck.instance.activate(webRecaptchaSiteKey: 'YOUR_RECAPTCHA_SITE_KEY');
   runApp(const MyApp());
@@ -82,8 +86,8 @@ class MyApp extends StatelessWidget {
               Get.lazyPut(() => UserUidController());
               Get.put(ConnectedDevicesController());
 
-              Get.put(() => BluetoothController());
-              Get.put(BluetoothController());
+              // Get.put(() => BluetoothController());
+              // Get.put(BluetoothController());
               Get.put(() => AnimationController);
             
             },

@@ -49,14 +49,13 @@ class _DeviceDetailsState extends State<DeviceDetails>
   bool isArmed = false;
   bool testAlarm = false;
   void updateArmedStatus(bool isArmed, String deviceId) async {
-    // var deviceId= 'SN83C048DF9D4'; use variable when getting many devices
-
-    DatabaseReference armedRef =
-        FirebaseDatabase.instance.ref("packageGuard/deviceId1/data/alerts/");
+    String deviceId= 'SN83C048DF9D4'; //use variable when getting many devices
+ DatabaseReference armedRef =
+        FirebaseDatabase.instance.ref().child('status').child(deviceId);
     await armedRef.once();
 
     await armedRef.update({
-      "armedStatus": isArmed,
+      "armed": isArmed,
       // "alarm": true
     });
   }
@@ -64,8 +63,10 @@ class _DeviceDetailsState extends State<DeviceDetails>
   void updateAlarmStatus(bool alarm, String deviceId) async {
     // var deviceId= 'SN83C048DF9D4'; use variable when getting many devices
 
+    // DatabaseReference alarmRef = FirebaseDatabase.instance
+    //     .ref("packageGuard/userId1/devices/deviceId1/data/alerts/");
     DatabaseReference alarmRef = FirebaseDatabase.instance
-        .ref("packageGuard/userId1/devices/deviceId1/data/alerts/");
+        .ref().child('status').child(deviceId).child('alerts');
     await alarmRef.once();
 
     await alarmRef.update({"alarm": alarm});
@@ -110,12 +111,14 @@ class _DeviceDetailsState extends State<DeviceDetails>
 
   void fetchArmedStatus() async {
     // var deviceId= 'SN83C048DF9D4'; use variable when getting many devices
-
+String deviceId='SN83C048DF9D4';
+    // DatabaseReference ref =
+    //     FirebaseDatabase.instance.ref("status/$deviceId/data/alerts/");
     DatabaseReference ref =
-        FirebaseDatabase.instance.ref("packageGuard/deviceId1/data/alerts/");
+        FirebaseDatabase.instance.ref().child('status').child(deviceId);
     DatabaseEvent event = await ref.once();
     dynamic data = event.snapshot.value;
-    armedStatus = data['armedStatus'] as bool?;
+    armedStatus = data['armed'] as bool?;
 
     armedstatus = armedStatus!;
     print('the armed status value now is${armedstatus}');

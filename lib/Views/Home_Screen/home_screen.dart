@@ -22,6 +22,7 @@ class HomeScreen extends StatefulWidget {
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
+  
 }
 
 class _HomeScreenState extends State<HomeScreen> {
@@ -117,12 +118,17 @@ class _HomeScreenState extends State<HomeScreen> {
                 padding: EdgeInsets.symmetric(horizontal: 20.w),
                 child: Column(
                   children: [
+
+                    //Notification container
                     NotificationSection(),
+
+
+
                     SizedBox(height: 12.h),
                     
                     GestureDetector(
                       onTap: () {
-                        Get.to(() => BluetoothPage());
+                        // Get.to(() => BluetoothPage());
                       },
                       child: Container(
                         // height: 30.h,

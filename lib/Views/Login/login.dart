@@ -51,6 +51,8 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SignIn> {
+  bool isLoading = false; // Initially, the button is not in loading state
+
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   String? deviceToken = '';
@@ -173,7 +175,7 @@ class _SignInState extends State<SignIn> {
         'Country': '',
         'ProfileImage': user!.photoURL! ?? '',
         'uid': uid,
-        'method':'emailAndPass'
+        'method': 'emailAndPass'
 
         // Use imageUrl directly
       };
@@ -238,13 +240,10 @@ class _SignInState extends State<SignIn> {
       await firestore.collection('users').doc(user?.uid).update({
         'deviceToken': deviceToken,
       });
-            print("user credentials: $deviceToken");
-
-   
+      print("user credentials: $deviceToken");
 
       // Retrieve the user's data from Firestore based on UID
       final uid = userCredential.user?.uid;
-
 
       if (uid != null) {
         final userDoc = await firestore.collection('users').doc(uid).get();
@@ -255,10 +254,10 @@ class _SignInState extends State<SignIn> {
           userUidController.setUID(uid); // Call setUID on UserUidController
           // Save user data to the controller
           userController.setUserData(userData!);
-             Get.to(() => const HomeScreen());
-      print("after HomeScreen");
-      // You might want to show a success snackbar here.
-      AppConstants.showCustomSnackBar("Welcome Back!");
+          Get.to(() => const HomeScreen());
+          print("after HomeScreen");
+          // You might want to show a success snackbar here.
+          AppConstants.showCustomSnackBar("Welcome Back!");
         } else {
           print("User document not found in Firestore");
         }
@@ -270,7 +269,10 @@ class _SignInState extends State<SignIn> {
     } catch (e) {
       // Sign-in failed, handle the error here.
       print("Sign-in error: $e");
+      setState(() {
+        isLoading=false;
 
+      });
       // Example: Show an error snackbar with GetX.
       Get.snackbar(
         'Sign-In Error',
@@ -285,7 +287,7 @@ class _SignInState extends State<SignIn> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    getToken();
+    // getToken();
   }
 
   @override
@@ -343,27 +345,39 @@ class _SignInState extends State<SignIn> {
                     ),
                     CustomSizeBox(height: 29.h),
                     Center(
-                      child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              fixedSize: Size(198.w,
-                                  context.screenWidth > 900 ? 80.h : 60.h),
-                              backgroundColor: AppColors.green),
-                          onPressed: () async {
+                      child:ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  fixedSize: Size(198.w,
+                                      context.screenWidth > 900 ? 80.h : 60.h),
+                                  backgroundColor: AppColors.green),
+                              onPressed: () async {
+                              setState(() {
+                                isLoading=true;
+                              });
+                          
+                              
 
-                            signIn();
-                            storeTheToken();
-                            getCredentials();
-                            SharedPreferences pref =
-                                await SharedPreferences.getInstance();
-                            pref.setString("email", emailController.text);
-                          },
-                          child: CustomText(
-                            title: "Submit",
-                            fontSize: 20.sp,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.btntext,
-                          )),
+                                signIn();
+                                // storeTheToken();
+                                getCredentials();
+
+                                // SharedPreferences pref =
+                                //     await SharedPreferences.getInstance();
+                                // pref.setString("email", emailController.text);
+                         
+                              },
+                              child: CustomText(
+                                title: "Submit",
+                                fontSize: 20.sp,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.btntext,
+                              )),
                     ),
+                    SizedBox(height: 12,),
+                    isLoading ?
+                    Center(child: CircularProgressIndicator()
+                    ) : SizedBox(),
+                  
                     CustomSizeBox(height: 10.h),
                     Center(
                         child: CustomText(
