@@ -8,6 +8,7 @@ import 'package:packageguard/Views/AddPackageGuard/Bluetooth.dart';
 import 'package:packageguard/Views/Login/login.dart';
 import 'package:packageguard/Widgets/custom_appbar.dart';
 import 'package:packageguard/Widgets/custom_text.dart';
+import 'package:packageguard/screens/scan_screen.dart';
 
 import '../../Widgets/drawer.dart';
 
@@ -92,7 +93,9 @@ class _OrderPackageState extends State<OrderPackage> {
                         SizedBox(height: 10.h),
                         GestureDetector(
                           onTap: () {
+
                             // Get.to(BluetoothPage());
+                            Get.to(ScanScreen());
                           },
                           child: Align(
                             alignment: Alignment.topLeft,

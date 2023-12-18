@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -75,7 +76,11 @@ class _SplashScreenState extends State<SplashScreen> {
       });
     } else {
       print("Going to login screen");
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+
       Get.to(() => SignIn());
+      });
+
     }
   }
 

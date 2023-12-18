@@ -8,6 +8,7 @@ import 'package:packageguard/Utils/app_images.dart';
 import 'package:packageguard/Views/EditSafeCircle/EditSafeCircle.dart';
 import 'package:packageguard/Widgets/custom_appbar.dart';
 import 'package:packageguard/Widgets/custom_text.dart';
+import 'package:velocity_x/velocity_x.dart';
 
 import '../../Utils/app_constants.dart';
 import '../../Widgets/custom_sized_box.dart';
@@ -150,6 +151,8 @@ class _EditSafeCircleState extends State<EditSafeCircle> {
     });
   }
 
+
+
   Future<void> deleteSafeCircleUser(String name, String email) async {
     try {
       User? user = FirebaseAuth.instance.currentUser;
@@ -290,15 +293,23 @@ class _EditSafeCircleState extends State<EditSafeCircle> {
                                       CustomSizeBox(
                                         height: 3.h,
                                       ),
-                                      CustomText(
-                                        title: user.userEmail,
-                                        fontSize: 11.sp,
-                                        fontWeight: FontWeight.w400,
-                                        color: AppColors.grey,
+                                      SizedBox(
+                                        height: 33,
+                                        width: 200,
+                                        child: CustomText(
+                                          title: user.userEmail,
+                                          fontSize: 11.sp,
+                                          fontWeight: FontWeight.w400,
+                                          color: AppColors.grey,
+                                          
+                                        ),
                                       ),
                                     ],
+                                    
                                   ),
+                                  
                                   const Spacer(),
+
                                   // Container(
                                   //   width: 100.0, // Set your desired width
                                   //   height: 100.0, // Set your desired height
@@ -306,6 +317,7 @@ class _EditSafeCircleState extends State<EditSafeCircle> {
                                   //     child: Image.network(user.image),
                                   //   ),
                                   // ),
+
                                   Row(
                                     children: [
                                       GestureDetector(

@@ -1,1 +1,1 @@
--keep class com.pauldemarco.flutter_blue.Protos* { *; }
+-keep class com.lib.flutter_blue_plus.* { *; }

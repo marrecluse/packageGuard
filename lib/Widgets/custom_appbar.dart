@@ -21,6 +21,8 @@ class CustomAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+   List<String>  titleName=title.split(' ');
+   
     return Stack(
       children: [
         SizedBox(
@@ -62,8 +64,7 @@ class CustomAppBar extends StatelessWidget {
                                   height: 50.h,
                                   width: 50.h,
                                   fit: BoxFit.cover,
-                                ) : Image(image: NetworkImage(image,
-                                ),
+                                ) : Image(image: NetworkImage(image),
                                 height: 50.h,
                                 width: 50.h,
                                 fit: BoxFit.cover,
@@ -87,16 +88,16 @@ class CustomAppBar extends StatelessWidget {
                               children: [
                                 CustomText(
                                   title: "Welcome",
-                                  fontSize: 13.sp,
+                                  fontSize: 11.sp,
                                   fontWeight: FontWeight.w500,
                                   color: AppColors.white,
                                 ),
-                                SizedBox(height: 6.w),
+                                SizedBox(height: 0.5.w),
                                 SizedBox(
                                   child: SizedBox(
                                     width: context.screenWidth * .61,
                                     child: CustomText(
-                                      title: title,
+                                      title: titleName[0],
                                       fontSize: 14.sp,
                                       fontWeight: FontWeight.w700,
                                       color: AppColors.white,

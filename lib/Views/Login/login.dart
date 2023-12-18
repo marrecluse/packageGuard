@@ -51,6 +51,7 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SignIn> {
+  String? googleUserImage;
   bool isLoading = false; // Initially, the button is not in loading state
 
   TextEditingController emailController = TextEditingController();
@@ -154,18 +155,59 @@ class _SignInState extends State<SignIn> {
       GoogleAuthProvider _googleAuthProvider = GoogleAuthProvider();
       UserCredential userCredential =
           await _auth.signInWithProvider(_googleAuthProvider);
-      User? user = userCredential.user;
+      User? user = userCredential.user!;
+AdditionalUserInfo? userProfile = userCredential.additionalUserInfo;
+
+if (userProfile != null && userProfile.profile != null) {
+googleUserImage = userProfile.profile!['picture'] as String?;
+  
+  if (googleUserImage != null) {
+    print('Google User Image: $googleUserImage');
+    // Use googleUserImage where needed
+  } else {
+    print('Picture URL not found');
+  }
+} else {
+  print('Profile information not available');
+}
+
+
       await user?.updateProfile(displayName: user.displayName);
 
       // await firestore.collection('users').doc(user?.uid).update({
       //   'deviceToken': deviceToken,
       // });
       final uid = userCredential.user?.uid;
-      print("Image url: ${user!.photoURL}");
+      print("Google user: $user");
+      print("GoogleUser Credentials: $userCredential");
+
+String? uName = user?.displayName;
+String? uEmail = user?.email;
+String? uPhoto = user?.photoURL;
+
+if (uPhoto != null) {
+  print('Photo URL: $uPhoto');
+} else {
+  print('Photo URL not available');
+}
+if (uName != null) {
+  print('Google user name: $uName');
+} else {
+  print('Google user name not available');
+}
+if (uEmail != null) {
+  print('uEmail : $uEmail');
+} else {
+  print('uEmail not available');
+}
+
+
+
+
       final userData = {
         'Name': user.displayName,
         'Email': user.email,
-        'phoneNumber': user!.phoneNumber! ?? '',
+        'phoneNumber': '',
         'Address': '',
         'City': '',
         'State': '',
@@ -173,7 +215,7 @@ class _SignInState extends State<SignIn> {
         'Zip code': '',
         'deviceToken': deviceToken,
         'Country': '',
-        'ProfileImage': user!.photoURL! ?? '',
+        'ProfileImage': googleUserImage,
         'uid': uid,
         'method': 'emailAndPass'
 
@@ -287,7 +329,7 @@ class _SignInState extends State<SignIn> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    // getToken();
+    getToken();
   }
 
   @override
@@ -358,7 +400,7 @@ class _SignInState extends State<SignIn> {
                               
 
                                 signIn();
-                                // storeTheToken();
+                                storeTheToken();
                                 getCredentials();
 
                                 // SharedPreferences pref =

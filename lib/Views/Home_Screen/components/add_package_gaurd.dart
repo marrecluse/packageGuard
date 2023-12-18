@@ -332,21 +332,23 @@ String deviceId='SN83C048DF9D4';
 
               // print('the value of the $list is');
 
-              Map deviceIds = map["deviceId1"];
-              print("deviceIds : $deviceIds");
+              Map deviceData = map["deviceId1"];
+              print("Battery of device is ${deviceData['battery']}");
+              print("deviceIds : $deviceData");
 
               print("deviceIds1: ${map["deviceId1"]}");
               print("deviceIds2: ${map["deviceId2"]}");
 
-              Map deviceData = deviceIds['data'];  
-              print("deviceData : $deviceData");   
 
-              print('here the battery is ${deviceData['battery']}');
+              Map alertsData = deviceData['alerts'];  
+              print("deviceData : $deviceData['alerts]");   
 
-              Map data =
-                  deviceData['alerts'] is Map ? deviceData['alerts'] : {};
+              print('here the battery is ${alertsData['ALERT_BATTERY']}');
 
-              print('the value of the map is ${data['armedStatus']}');
+              // Map data =
+              //     deviceIds['alerts'] is Map ? deviceIds['alerts'] : {};
+
+              print('the value of the map is $alertsData');
 
               // FirebaseFirestore.instance
               //     .collection("users")
@@ -652,7 +654,7 @@ String deviceId='SN83C048DF9D4';
                                 setState(() {
                                   // controller.enableIsArmed(index);
                                   armedstatus = value;
-                                  deviceData['alerts'] = value;
+                                  deviceData['armed'] = value;
                                   _saveState(armedstatus);
                                 });
                                 updateArmedStatus(armedstatus, deviceId);

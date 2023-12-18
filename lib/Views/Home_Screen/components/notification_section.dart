@@ -24,16 +24,15 @@ class _NotificationSectionState extends State<NotificationSection> {
   @override
   // final ref = FirebaseDatabase.instance
   //     .ref('packageGuard/userId1/devices/deviceId1/data');
-  final ref =
-      FirebaseDatabase.instance.ref('packageGuard/userId1/devices/deviceId1/');
+  final ref = FirebaseDatabase.instance.ref('packageGuard/userId1/devices/');
   // final ref2 = FirebaseDatabase.instance
   //     .ref('packageGuard/userId1/devices/deviceId1/timestamps');
   Future<void> updateAlertData() async {
     DatabaseReference alarmRef = FirebaseDatabase.instance
-        .ref("packageGuard/userId1/devices/deviceId1/data/alerts/");
+        .ref("packageGuard/userId1/devices/deviceId1/alerts/");
     await alarmRef.once();
 
-    await alarmRef.update({"packageAdded": false});
+    await alarmRef.update({"ALERT_SCALEADDED": false});
   }
 
   // String text = '23 mins agooo';
@@ -65,7 +64,7 @@ class _NotificationSectionState extends State<NotificationSection> {
               fontWeight: FontWeight.w700,
             ),
             SizedBox(height: 10.h),
-            
+
             StreamBuilder(
                 stream: ref.onValue,
                 builder: (context, AsyncSnapshot<DatabaseEvent> snapshot) {
@@ -74,19 +73,27 @@ class _NotificationSectionState extends State<NotificationSection> {
                   } else {
                     Map<dynamic, dynamic> map =
                         snapshot.data!.snapshot.value as dynamic;
-                    Map deviceData = map['data'];
+                    // Map deviceData = map['data'];
+                    // Map<dynamic, dynamic> alertsData = deviceData['alerts'];
+
+                    Map deviceData = map['deviceId1'];
+
                     Map<dynamic, dynamic> alertsData = deviceData['alerts'];
+
                     // bool alarmStatus = alertsData['alarm'];
-print("abdul:deviceData :  $deviceData");
+                    print("abdul:deviceData :  $deviceData");
+                    String alertTimestamp = alertsData['timeStamp'];
+                    debugPrint("alertTime: ${alertsData['timeStamp']}");
 
                     // debugPrint('the alarmdata is $alarmStatus');
 
-                    Map timeStamps = map['timestamps'];
+                    // Map timeStamps = map['deviceId1']['timestamps'];
+                    // print("Timestamps are $timeStamps");
 
-                    List<dynamic> timestampValues = timeStamps.values.toList();
+                    // List<dynamic> timestampValues = alertsData['timeStamp'].toList();
 
                     List<dynamic> itemList = [];
-                    bool packageAdded = alertsData['packageAdded'];
+                    bool packageAdded = alertsData['ALERT_SCALEADDED'];
 
                     void addItemToList() {
                       if (packageAdded) {
@@ -98,10 +105,10 @@ print("abdul:deviceData :  $deviceData");
                     if (packageAdded) {
                       addItemToList();
 
-                      alertsData['packageAdded'] = false;
+                      alertsData['ALERT_SCALEADDED'] = false;
 
                       debugPrint(
-                          'after updating, package added status is ${alertsData['packageAdded']}');
+                          'after updating, package added status is ${alertsData['ALERT_SCALEADDED']}');
                     }
 
                     // List<dynamic> itemList = [];
@@ -130,13 +137,24 @@ print("abdul:deviceData :  $deviceData");
                         itemCount: itemList.length,
                         shrinkWrap: true,
                         itemBuilder: (context, index) {
-                          DateTime timestamp =
-                              DateTime.parse(timestampValues[index]);
-                          // Format timestamp using timeago
+                          // DateTime timestamp =
+                          //     // DateTime.parse(timestampValues[index]);
+                          //     DateTime.parse(alertTimestamp);
+                          // // Format timestamp using timeago
+                          // String formattedTime = timeago.format(
+                          //   timestamp,
+                          //   // locale: 'en_short',
+                          // );
+
+                          int epochTimeInSeconds = int.parse(alertTimestamp);
+                          DateTime dateTime =
+                              DateTime.fromMillisecondsSinceEpoch(
+                                  epochTimeInSeconds * 1000);
                           String formattedTime = timeago.format(
-                            timestamp,
+                            dateTime,
                             // locale: 'en_short',
                           );
+
                           return Column(
                             children: [
                               Align(

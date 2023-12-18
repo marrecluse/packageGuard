@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:packageguard/Utils/app_images.dart';
 import 'package:packageguard/Views/Login/login.dart';
 import 'package:packageguard/Widgets/custom_appbar.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:velocity_x/velocity_x.dart';
 // import 'package:safepackage/Utils/app_images.dart';
 // import 'package:safepackage/Widgets/custom_appbar.dart';
@@ -27,6 +28,20 @@ class _AddPackageGuardState extends State<AddPackageGuard> {
 // Access user data
   Map<String, dynamic> userData = {};
   List<Map<String, dynamic>> devices = [];
+
+final Uri _url = Uri.parse('https://www.thepackageguard.com/');
+
+
+
+
+Future<void> _launchUrl() async {
+  try {
+    await launchUrl(_url);
+  } catch (e) {
+    print(e);
+  }
+}
+
 
   @override
   void initState() {
@@ -223,12 +238,19 @@ class _AddPackageGuardState extends State<AddPackageGuard> {
                             ),
                           ),
                           SizedBox(height: 2.h),
-                          CustomText(
-                            title: 'www.thepackageguard.com/support',
-                            fontSize: 12.sp,
-                            color: AppColors.navyblue,
-                            fontWeight: FontWeight.w400,
-                            decoration: TextDecoration.underline,
+
+                        GestureDetector(
+                          onTap: (){
+                            print('Going to url');
+                            _launchUrl();
+                          },
+                            child: CustomText(
+                              title: 'www.thepackageguard.com',
+                              fontSize: 12.sp,
+                              color: AppColors.navyblue,
+                              fontWeight: FontWeight.w400,
+                              decoration: TextDecoration.underline,
+                            ),
                           ),
                         ],
                       ),

@@ -22,7 +22,7 @@ class HomeScreen extends StatefulWidget {
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
-  
+
 }
 
 class _HomeScreenState extends State<HomeScreen> {
@@ -128,7 +128,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     
                     GestureDetector(
                       onTap: () {
-                        // Get.to(() => BluetoothPage());
+                        Get.to(() => BluetoothPage());
                       },
                       child: Container(
                         // height: 30.h,
@@ -174,7 +174,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: AddPackageGaurd()),
                   ],
                 ),
-              )
+              ),
             ],
           ),
         ),

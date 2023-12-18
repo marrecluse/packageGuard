@@ -5,6 +5,7 @@ import 'package:flutter_switch/flutter_switch.dart';
 import 'package:get/get.dart';
 import 'package:packageguard/Utils/app_images.dart';
 import 'package:packageguard/Views/DeviceDetails/Device_alerts.dart';
+import 'package:packageguard/Views/Home_Screen/components/add_package_gaurd.dart';
 import 'package:packageguard/Views/Wifi_Connect/wifi_connect.dart';
 import 'package:packageguard/Widgets/custom_appbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -114,6 +115,7 @@ class _DeviceDetailsState extends State<DeviceDetails>
 String deviceId='SN83C048DF9D4';
     // DatabaseReference ref =
     //     FirebaseDatabase.instance.ref("status/$deviceId/data/alerts/");
+    try {
     DatabaseReference ref =
         FirebaseDatabase.instance.ref().child('status').child(deviceId);
     DatabaseEvent event = await ref.once();
@@ -121,10 +123,14 @@ String deviceId='SN83C048DF9D4';
     armedStatus = data['armed'] as bool?;
 
     armedstatus = armedStatus!;
-    print('the armed status value now is${armedstatus}');
+    print('the armed status value now is ${armedstatus}');
     setState(() {
       switchValue = armedstatus ?? false;
-    });
+    });  
+    } catch (e) {
+      print("fethArmedStatus failed:  $e");
+    }
+    
     _saveArmedStatusToSharedPreferences();
     // print('the armed status is ${armedstatus}');
     // Object? armedStatus = event.snapshot.value;
@@ -397,289 +403,296 @@ String deviceId='SN83C048DF9D4';
                     ],
                   ),
                   SizedBox(height: 30.h),
-                  Container(
-                    height: 360.h,
-                    width: MediaQuery.of(context).size.width,
-                    child: StreamBuilder(
-                        stream: ref.onValue,
-                        builder:
-                            (context, AsyncSnapshot<DatabaseEvent> snapshot) {
-                          if (!snapshot.hasData) {
-                            return Container();
-                          } else {
-                            Map<dynamic, dynamic> map =
-                                snapshot.data!.snapshot.value as dynamic;
-                            List list = map.keys.toList();
-                            // print('the value of the $list is');
+AddPackageGaurd(),
+// cccccc
 
-                            Map deviceIds = map["deviceId1"];
+                  // Container(
+                  //   height: 360.h,
+                  //   width: MediaQuery.of(context).size.width,
+                  //   child: StreamBuilder(
+                  //       stream: ref.onValue,
+                  //       builder:
+                  //           (context, AsyncSnapshot<DatabaseEvent> snapshot) {
+                  //         if (!snapshot.hasData) {
+                  //           return Container();
+                  //         } else {
+                  //           Map<dynamic, dynamic> map =
+                  //               snapshot.data!.snapshot.value as dynamic;
+                  //           List list = map.keys.toList();
+                  //           // print('the value of the $list is');
 
-                            Map deviceData = deviceIds['data'];
-                            print(
-                                'here the battery is ${deviceData['battery']}');
+                  //           Map deviceIds = map["deviceId1"];
 
-                            Map data = deviceData['alerts'] is Map
-                                ? deviceData['alerts']
-                                : {};
+                  //           Map deviceData = deviceIds['data'];
+                  //           print(
+                  //               'here the battery is ${deviceData['battery']}');
 
-                            print(
-                                'the value of the map is ${data['armedStatus']}');
+                  //           Map data = deviceData['alerts'] is Map
+                  //               ? deviceData['alerts']
+                  //               : {};
 
-                            // FirebaseFirestore.instance
-                            //     .collection("users")
-                            //     .doc(FirebaseAuth.instance.currentUser!.uid)
-                            //     .update({"devices": deviceIds});
+                  //           print(
+                  //               'the value of the map is ${data['armedStatus']}');
 
-                            // List<bool> armedStatusList =
-                            //     List.generate(deviceIds.length, (index) => false);
+                  //           // FirebaseFirestore.instance
+                  //           //     .collection("users")
+                  //           //     .doc(FirebaseAuth.instance.currentUser!.uid)
+                  //           //     .update({"devices": deviceIds});
 
-                            // battery =
-                            //     map['SN83C048DF9D4']['battery_level'] ?? 'battery level';
+                  //           // List<bool> armedStatusList =
+                  //           //     List.generate(deviceIds.length, (index) => false);
 
-                            return ListView.builder(
-                              physics: const BouncingScrollPhysics(),
-                              // itemCount: devices.length, // Use the length of the devices list
-                              itemCount: list.length,
-                              // Use the length of the devices list
-                              itemBuilder: (context, index) {
-                                // Map<dynamic, dynamic> packageGuardInfo =
-                                //     list[index]['SN83C048DF9D4'] ?? {};
+                  //           // battery =
+                  //           //     map['SN83C048DF9D4']['battery_level'] ?? 'battery level';
 
-                                Key itemKey = UniqueKey();
-                                // Map<dynamic, dynamic> packageGuardInfo = map[deviceIds] ?? {};
-                                // Map<dynamic, dynamic> packageGuardInfo = map[data] ?? {};
+                  //           return ListView.builder(
+                  //             physics: const BouncingScrollPhysics(),
+                  //             // itemCount: devices.length, // Use the length of the devices list
+                  //             itemCount: list.length,
+                  //             // Use the length of the devices list
+                  //             itemBuilder: (context, index) {
+                  //               // Map<dynamic, dynamic> packageGuardInfo =
+                  //               //     list[index]['SN83C048DF9D4'] ?? {};
 
-                                // print("package Guard info: $packageGuardInfo");
+                  //               Key itemKey = UniqueKey();
+                  //               // Map<dynamic, dynamic> packageGuardInfo = map[deviceIds] ?? {};
+                  //               // Map<dynamic, dynamic> packageGuardInfo = map[data] ?? {};
 
-                                // print("alarm status: ${data['alarm']}");
+                  //               // print("package Guard info: $packageGuardInfo");
 
-                                // bool armedStatus = data['armedStatus'] ?? false;
-                                // print("Armed status: ${armedStatus}");
-                                // String battery = deviceData['battery'] ?? 'battery level';
-                                // print("battery: ${battery}");
+                  //               // print("alarm status: ${data['alarm']}");
 
-                                // bool armedStatus = packageGuardInfo['armed_status'] ?? false;
-                                // var device_id = packageGuardInfo[
-                                //'device_id'] ?? 'dd';
-                                // final deviceData = 1; // Access the device data
+                  //               // bool armedStatus = data['armedStatus'] ?? false;
+                  //               // print("Armed status: ${armedStatus}");
+                  //               // String battery = deviceData['battery'] ?? 'battery level';
+                  //               // print("battery: ${battery}");
 
-                                // ids.add(deviceIds[index]);
-                                // print("the device ids are given ad $ids");
+                  //               // bool armedStatus = packageGuardInfo['armed_status'] ?? false;
+                  //               // var device_id = packageGuardInfo[
+                  //               //'device_id'] ?? 'dd';
+                  //               // final deviceData = 1; // Access the device data
 
-                                return Container(
-                                  key: itemKey,
-                                  margin: EdgeInsets.only(top: 5.h),
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 10.w, vertical: 1.h),
-                                  // height: 186.h,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(8.r),
-                                    color: Colors.blueGrey.shade100,
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      ListTile(
-                                        contentPadding: EdgeInsets.zero,
-                                        horizontalTitleGap: 10.w,
-                                        leading: Image.asset(
-                                          AppImages.packageLogo,
-                                          height: 48,
-                                          width: 68,
-                                        ),
-                                        title: CustomText(
-                                          title: isArmed
-                                              ? 'Armed'
-                                              : (double.parse(deviceData[
-                                                          'battery']) <=
-                                                      20
-                                                  ? 'Low Battery'
-                                                  : 'disarmed'),
-                                          // Access device status
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 13,
-                                          color: isArmed
-                                              ? const Color(0xff348D15)
-                                              : Colors.red,
-                                        ),
-                                        subtitle: CustomText(
-                                          title: list[index]
-                                          //  deviceIds[0]
-                                          , // Access device SSID
-                                          color: const Color(0xff4E4E4E),
-                                          fontSize: 9,
-                                          fontWeight: FontWeight.w400,
-                                        ),
-                                        trailing: AnimatedBuilder(
-                                          animation: _animationController,
-                                          builder: (context, child) {
-                                            // Use the animation value to interpolate between the two images
-                                            final imageIndex =
-                                                _animationController.value < 0.5
-                                                    ? 0
-                                                    : (_animationController
-                                                                .value <
-                                                            0.75
-                                                        ? 1
-                                                        : 2);
+                  //               // ids.add(deviceIds[index]);
+                  //               // print("the device ids are given ad $ids");
 
-                                            return double.parse(deviceData[
-                                                            'battery']) <=
-                                                        20 &&
-                                                    armedstatus
-                                                ? Image.asset(
-                                                    _trailImages[imageIndex],
-                                                    height: 41,
-                                                    width: 41,
-                                                  )
-                                                : Text('Ready To Arm');
-                                          },
-                                        ),
-                                      ),
-                                      Container(
-                                        height: 60,
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 10.w, vertical: 9.h),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(5.r),
-                                        ),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                InnerContainerData(
-                                                  img: AppImages.wifiImg,
-                                                  imgHeight: 20,
-                                                  imgWidth: 20,
-                                                  toptext: 'Connected to',
-                                                  btnText: _controller
-                                                      .connectedDevices.keys
-                                                      .toString(),
-                                                  tFontWeight: FontWeight.w400,
-                                                  bFontWeight: FontWeight.w700,
-                                                ),
-                                              ],
-                                            ),
-                                            Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                InnerContainerData(
-                                                  img: double.parse(deviceData[
-                                                              'battery']) >=
-                                                          80
-                                                      ? AppImages.batteryFull
-                                                      : (double.parse(deviceData[
-                                                                  'battery']) <=
-                                                              20
-                                                          ? AppImages
-                                                              .batteryloww
-                                                          : AppImages
-                                                              .batteryLow),
-                                                  imgHeight: 20,
-                                                  imgWidth: 30,
-                                                  toptext: 'Battery',
-                                                  btnText: deviceData[
-                                                      'battery'], // Replace with actual battery data
-                                                  tFontWeight: FontWeight.w400,
-                                                  bFontWeight: FontWeight.w700,
-                                                ),
-                                              ],
-                                            ),
-                                            Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                InnerContainerData(
-                                                  img: AppImages.diamondImg,
-                                                  imgHeight: 22,
-                                                  imgWidth: 22,
-                                                  toptext: '2 Packages',
-                                                  btnText:
-                                                      "Waiting", // Replace with actual package data
-                                                  tFontWeight: FontWeight.w700,
-                                                  bFontWeight: FontWeight.w400,
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      SizedBox(height: 10.h),
-                                      // const CustomSwitch(),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                        children: [
-                                          CustomText(
-                                            title: armedstatus
-                                                ? 'Armed'
-                                                : 'DisArmed', // Access device status
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 12,
-                                            color: armedstatus
-                                                ? const Color(0xff348D15)
-                                                : Colors.red,
-                                          ),
-                                          SizedBox(width: 5.w),
-                                          FlutterSwitch(
-                                            padding: 0,
-                                            activeColor:
-                                                const Color(0xff3FCE33),
-                                            inactiveColor: Colors.red,
-                                            value: armedstatus,
-                                            width: 40,
-                                            height: 20,
-                                            toggleSize: 20,
-                                            onToggle: (value) async {
-                                              print(
-                                                  "Toggle value is true for: $value");
-                                              setState(() {
-                                                // controller.enableIsArmed(index);
-                                                armedstatus = value;
-                                                deviceData['alerts'] = value;
-                                              });
-                                              updateArmedStatus(
-                                                  armedstatus, deviceId);
-                                              _saveArmedStatusToSharedPreferences();
+                  //               return Container(
+                  //                 key: itemKey,
+                  //                 margin: EdgeInsets.only(top: 5.h),
+                  //                 padding: EdgeInsets.symmetric(
+                  //                     horizontal: 10.w, vertical: 1.h),
+                  //                 // height: 186.h,
+                  //                 decoration: BoxDecoration(
+                  //                   borderRadius: BorderRadius.circular(8.r),
+                  //                   color: Colors.blueGrey.shade100,
+                  //                 ),
+                  //                 child: Column(
+                  //                   crossAxisAlignment:
+                  //                       CrossAxisAlignment.start,
+                  //                   children: [
+                  //                     ListTile(
+                  //                       contentPadding: EdgeInsets.zero,
+                  //                       horizontalTitleGap: 10.w,
+                  //                       leading: Image.asset(
+                  //                         AppImages.packageLogo,
+                  //                         height: 48,
+                  //                         width: 68,
+                  //                       ),
+                  //                       title: CustomText(
+                  //                         title: isArmed
+                  //                             ? 'Armed'
+                  //                             : (double.parse(deviceData[
+                  //                                         'battery']) <=
+                  //                                     20
+                  //                                 ? 'Low Battery'
+                  //                                 : 'disarmed'),
+                  //                         // Access device status
+                  //                         fontWeight: FontWeight.w600,
+                  //                         fontSize: 13,
+                  //                         color: isArmed
+                  //                             ? const Color(0xff348D15)
+                  //                             : Colors.red,
+                  //                       ),
+                  //                       subtitle: CustomText(
+                  //                         title: list[index]
+                  //                         //  deviceIds[0]
+                  //                         , // Access device SSID
+                  //                         color: const Color(0xff4E4E4E),
+                  //                         fontSize: 9,
+                  //                         fontWeight: FontWeight.w400,
+                  //                       ),
+                  //                       trailing: AnimatedBuilder(
+                  //                         animation: _animationController,
+                  //                         builder: (context, child) {
+                  //                           // Use the animation value to interpolate between the two images
+                  //                           final imageIndex =
+                  //                               _animationController.value < 0.5
+                  //                                   ? 0
+                  //                                   : (_animationController
+                  //                                               .value <
+                  //                                           0.75
+                  //                                       ? 1
+                  //                                       : 2);
 
-                                              armedstatus != armedstatus;
-                                              print(
-                                                  'the value of the $isArmed hello');
+                  //                           return double.parse(deviceData[
+                  //                                           'battery']) <=
+                  //                                       20 &&
+                  //                                   armedstatus
+                  //                               ? Image.asset(
+                  //                                   _trailImages[imageIndex],
+                  //                                   height: 41,
+                  //                                   width: 41,
+                  //                                 )
+                  //                               : Text('Ready To Arm');
+                  //                         },
+                  //                       ),
+                  //                     ),
+                  //                     Container(
+                  //                       height: 60,
+                  //                       width:
+                  //                           MediaQuery.of(context).size.width,
+                  //                       padding: EdgeInsets.symmetric(
+                  //                           horizontal: 10.w, vertical: 9.h),
+                  //                       decoration: BoxDecoration(
+                  //                         color: Colors.white,
+                  //                         borderRadius:
+                  //                             BorderRadius.circular(5.r),
+                  //                       ),
+                  //                       child: Row(
+                  //                         mainAxisAlignment:
+                  //                             MainAxisAlignment.spaceBetween,
+                  //                         children: [
+                  //                           Column(
+                  //                             mainAxisAlignment:
+                  //                                 MainAxisAlignment.center,
+                  //                             children: [
+                  //                               InnerContainerData(
+                  //                                 img: AppImages.wifiImg,
+                  //                                 imgHeight: 20,
+                  //                                 imgWidth: 20,
+                  //                                 toptext: 'Connected to',
+                  //                                 btnText: _controller
+                  //                                     .connectedDevices.keys
+                  //                                     .toString(),
+                  //                                 tFontWeight: FontWeight.w400,
+                  //                                 bFontWeight: FontWeight.w700,
+                  //                               ),
+                  //                             ],
+                  //                           ),
+                  //                           Column(
+                  //                             mainAxisAlignment:
+                  //                                 MainAxisAlignment.center,
+                  //                             children: [
+                  //                               InnerContainerData(
+                  //                                 img: double.parse(deviceData[
+                  //                                             'battery']) >=
+                  //                                         80
+                  //                                     ? AppImages.batteryFull
+                  //                                     : (double.parse(deviceData[
+                  //                                                 'battery']) <=
+                  //                                             20
+                  //                                         ? AppImages
+                  //                                             .batteryloww
+                  //                                         : AppImages
+                  //                                             .batteryLow),
+                  //                                 imgHeight: 20,
+                  //                                 imgWidth: 30,
+                  //                                 toptext: 'Battery',
+                  //                                 btnText: deviceData[
+                  //                                     'battery'], // Replace with actual battery data
+                  //                                 tFontWeight: FontWeight.w400,
+                  //                                 bFontWeight: FontWeight.w700,
+                  //                               ),
+                  //                             ],
+                  //                           ),
+                  //                           Column(
+                  //                             mainAxisAlignment:
+                  //                                 MainAxisAlignment.center,
+                  //                             children: [
+                  //                               InnerContainerData(
+                  //                                 img: AppImages.diamondImg,
+                  //                                 imgHeight: 22,
+                  //                                 imgWidth: 22,
+                  //                                 toptext: '2 Packages',
+                  //                                 btnText:
+                  //                                     "Waiting", // Replace with actual package data
+                  //                                 tFontWeight: FontWeight.w700,
+                  //                                 bFontWeight: FontWeight.w400,
+                  //                               ),
+                  //                             ],
+                  //                           ),
+                  //                         ],
+                  //                       ),
+                  //                     ),
+                  //                     SizedBox(height: 10.h),
+                  //                     // const CustomSwitch(),
+                  //                     Row(
+                  //                       mainAxisAlignment:
+                  //                           MainAxisAlignment.end,
+                  //                       children: [
+                  //                         CustomText(
+                  //                           title: armedstatus
+                  //                               ? 'Armed'
+                  //                               : 'DisArmed', // Access device status
+                  //                           fontWeight: FontWeight.w600,
+                  //                           fontSize: 12,
+                  //                           color: armedstatus
+                  //                               ? const Color(0xff348D15)
+                  //                               : Colors.red,
+                  //                         ),
+                  //                         SizedBox(width: 5.w),
+                  //                         FlutterSwitch(
+                  //                           padding: 0,
+                  //                           activeColor:
+                  //                               const Color(0xff3FCE33),
+                  //                           inactiveColor: Colors.red,
+                  //                           value: armedstatus,
+                  //                           width: 40,
+                  //                           height: 20,
+                  //                           toggleSize: 20,
+                  //                           onToggle: (value) async {
+                  //                             print(
+                  //                                 "Toggle value is true for: $value");
+                  //                             setState(() {
+                  //                               // controller.enableIsArmed(index);
+                  //                               armedstatus = value;
+                  //                               deviceData['alerts'] = value;
+                  //                             });
+                  //                             updateArmedStatus(
+                  //                                 armedstatus, deviceId);
+                  //                             _saveArmedStatusToSharedPreferences();
 
-                                              // Determine if it should be armed or not
+                  //                             armedstatus != armedstatus;
+                  //                             print(
+                  //                                 'the value of the $isArmed hello');
 
-                                              // Update the status in Firestore
-                                              // await updateDeviceStatus(
-                                              //     deviceData['deviceId'], isArmed);
+                  //                             // Determine if it should be armed or not
 
-                                              // Update the local status`
-                                              // setState(() {
-                                              // deviceData['status'] =
-                                              //     isArmed ? 'armed' : 'disarmed';
-                                              // });
-                                            },
-                                          ),
-                                        ],
-                                      ), // If you have a switch component
-                                      SizedBox(height: 10.h),
-                                    ],
-                                  ),
-                                );
-                              },
-                            );
-                          }
-                        }),
-                  )
+                  //                             // Update the status in Firestore
+                  //                             // await updateDeviceStatus(
+                  //                             //     deviceData['deviceId'], isArmed);
+
+                  //                             // Update the local status`
+                  //                             // setState(() {
+                  //                             // deviceData['status'] =
+                  //                             //     isArmed ? 'armed' : 'disarmed';
+                  //                             // });
+                  //                           },
+                  //                         ),
+                  //                       ],
+                  //                     ), // If you have a switch component
+                  //                     SizedBox(height: 10.h),
+                  //                   ],
+                  //                 ),
+                  //               );
+                  //             },
+                  //           );
+                  //         }
+                  //       }),
+                  // )
+
+
+
+                  // ddddddddd
 
                   // Container(
                   //   width: 358.w,
@@ -767,7 +780,7 @@ String deviceId='SN83C048DF9D4';
                   //     ],
                   //   ),
                   // ),
-                  ,
+                  
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,

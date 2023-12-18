@@ -23,12 +23,14 @@ class CustomText extends StatelessWidget {
     return Text(
       title,
       textAlign: textAlign,
+      softWrap: true,
       style: TextStyle(
           fontFamily: 'Montserrat',
           fontSize: fontSize,
           fontWeight: fontWeight,
           letterSpacing: 0.7,
           color: color,
+
         
           decoration: decoration),
     );
@@ -57,6 +59,8 @@ class CustomText2 extends StatelessWidget {
     return Text(
       title as String,
       textAlign: textAlign,
+      softWrap: true,
+      overflow: TextOverflow.ellipsis,
       style: TextStyle(
                   fontFamily: 'Montserrat',
 
@@ -64,6 +68,7 @@ class CustomText2 extends StatelessWidget {
           fontWeight: fontWeight,
           letterSpacing: 0.7,
           color: color,
+          
           decoration: decoration),
     );
   }

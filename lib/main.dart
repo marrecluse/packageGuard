@@ -84,10 +84,11 @@ class MyApp extends StatelessWidget {
               Get.lazyPut(() => WifiController());
               Get.lazyPut(() => UserController());
               Get.lazyPut(() => UserUidController());
+              Get.lazyPut(() => BluetoothController());
               Get.put(ConnectedDevicesController());
 
-              // Get.put(() => BluetoothController());
-              // Get.put(BluetoothController());
+              Get.put(() => BluetoothController());
+              Get.put(BluetoothController());
               Get.put(() => AnimationController);
             
             },

@@ -461,7 +461,7 @@ class _AddSafePersonState extends State<AddSafePerson> {
     // change your email here
     String username = 'danijakhar11@gmail.com';
     // change your password here
-    String password = 'wxlthhhlaljgojjb';
+    String password = 'jwgrkjjpndqsrxnk';
     final smtpServer = gmail(username, password);
     final mailmessage = mailer.Message()
       ..from = Address(username, 'Mail Service')
@@ -508,7 +508,6 @@ class _AddSafePersonState extends State<AddSafePerson> {
     // Show a snackbar
 
     // Navigate to the EditSafeCircle page
-    Get.to(() => EditSafeCircle());
   }
 
   void showSnackbar(String message) {
@@ -923,6 +922,9 @@ class _AddSafePersonState extends State<AddSafePerson> {
                                     // );
 
                                     // addNotification();
+                                    
+                                        Get.to(() => EditSafeCircle());
+
                                   } else {
                                     AppConstants.showCustomSnackBar(
                                         'Not an App user.');
