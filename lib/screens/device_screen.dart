@@ -2,6 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:packageguard/Views/Wifi_Connect/wifi_connect.dart';
 
 import '../Widgets/service_tile.dart';
 import '../Widgets/characteristic_tile.dart';
@@ -114,7 +117,6 @@ class _DeviceScreenState extends State<DeviceScreen> {
       Snackbar.show(ABC.c, prettyException("Disconnect Error:", e), success: false);
     }
   }
-
   Future onDiscoverServicesPressed() async {
     if (mounted) {
       setState(() {
@@ -227,6 +229,7 @@ class _DeviceScreenState extends State<DeviceScreen> {
     return Row(children: [
       if (_isConnecting || _isDisconnecting) buildSpinner(context),
       TextButton(
+          
           onPressed: _isConnecting ? onCancelPressed : (isConnected ? onDisconnectPressed : onConnectPressed),
           child: Text(
             _isConnecting ? "CANCEL" : (isConnected ? "DISCONNECT" : "CONNECT"),
@@ -255,6 +258,11 @@ class _DeviceScreenState extends State<DeviceScreen> {
               ),
               buildMtuTile(context),
               ..._buildServiceTiles(context, widget.device),
+
+              ElevatedButton(onPressed: (){
+                                  Get.to(() => WifiConnect());
+
+              }, child:Text('Get Wifi Credentials') ),
             ],
           ),
         ),

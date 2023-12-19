@@ -227,7 +227,18 @@ try {
           //     }),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 12),
-            child: ListView.builder(
+            child: notificationList == null || notificationList.isEmpty
+            
+      ? Column(
+        children: [
+          Center(
+              child: CustomText(title: 'No Notifications',)
+            ),
+        ],
+      )
+      : 
+            
+            ListView.builder(
               physics: const BouncingScrollPhysics(),
               itemCount: notificationList.length,
               // itemCount: 5,

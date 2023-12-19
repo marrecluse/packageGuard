@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:packageguard/Views/AddPackageGuard/Bluetooth.dart';
 import 'package:packageguard/Views/Wifi_Connect/wifi_connect.dart';
 import 'package:packageguard/Widgets/custom_appbar.dart';
+import 'package:packageguard/screens/scan_screen.dart';
 import 'package:velocity_x/velocity_x.dart';
 import '../../Utils/app_colors.dart';
 import '../../Widgets/custom_text.dart';
@@ -40,6 +41,14 @@ class _HomeScreenState extends State<HomeScreen> {
     isAlarming = alarmStatus;
 
     print("app: $isAlarming");
+  }
+
+
+  Future<void> _refreshData() async {
+    setState(() {
+      userData = userController.userData as Map<String, dynamic>;
+      initState();
+    });
   }
 
   void getAlarmStatus() {
@@ -104,78 +113,85 @@ class _HomeScreenState extends State<HomeScreen> {
     return SafeArea(
       child: Scaffold(
         drawer: MyDrawer(),
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              CustomAppBar(
-                image:profileImage,
-                // image: userData['method']=='emailAndPass' ? emailprofileImage : guserPicture,
-                title: '${userData['Name'] ?? 'User'} ',
-
-                // title: 'Abdul',
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20.w),
-                child: Column(
-                  children: [
-
-                    //Notification container
-                    NotificationSection(),
-
-
-
-                    SizedBox(height: 12.h),
-                    
-                    GestureDetector(
-                      onTap: () {
-                        Get.to(() => BluetoothPage());
-                      },
-                      child: Container(
-                        // height: 30.h,
-                        padding: EdgeInsets.symmetric(vertical: 15.h),
-                        width: 393.w,
-                        decoration: BoxDecoration(
-                            color: AppColors.navyblue,
-                            borderRadius: BorderRadius.circular(8.r)),
-                        child: Center(
-                          child: CustomText(
-                            title: "Add Package Guard",
-                            fontSize: 13.sp,
-                            fontWeight: FontWeight.w500,
-                            color: AppColors.btntext,
+        body: RefreshIndicator(
+          backgroundColor: AppColors.navyblue,
+          color: Colors.white,
+          strokeWidth: 4,
+          onRefresh: _refreshData,
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                CustomAppBar(
+                  image:profileImage,
+                  // image: userData['method']=='emailAndPass' ? emailprofileImage : guserPicture,
+                  title: '${userData['Name'] ?? 'User'} ',
+        
+                  // title: 'Abdul',
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20.w),
+                  child: Column(
+                    children: [
+        
+                      //Notification container
+                      NotificationSection(),
+        
+        
+        
+                      SizedBox(height: 12.h),
+                      
+                      GestureDetector(
+                        onTap: () {
+                          Get.to(() => ScanScreen());
+        
+                        },
+                        child: Container(
+                          // height: 30.h,
+                          padding: EdgeInsets.symmetric(vertical: 15.h),
+                          width: 393.w,
+                          decoration: BoxDecoration(
+                              color: AppColors.navyblue,
+                              borderRadius: BorderRadius.circular(8.r)),
+                          child: Center(
+                            child: CustomText(
+                              title: "Add Package Guard",
+                              fontSize: 13.sp,
+                              fontWeight: FontWeight.w500,
+                              color: AppColors.btntext,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    SizedBox(height: 20.h),
-                    isAlarming
-                        ? GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                turnOffAlarm();
-                              });
-                            },
-                            child: Container(
-                              color: Colors.red,
-                              child: Column(children: [
-                                const Text(
-                                  'DEVICE IS ALARMING...Turn Off Alarm',
-                                  style: TextStyle(fontSize: 15.0),
-                                ),
-                                Icon(Icons.notifications_off, size: 50.0),
-                              ]),
-                            ),
-                          )
-                        : SizedBox(),
-                    GestureDetector(
-                        onTap: () {
-                          Get.to(DeviceDetails());
-                        },
-                        child: AddPackageGaurd()),
-                  ],
+                      SizedBox(height: 20.h),
+                      isAlarming
+                          ? GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  turnOffAlarm();
+                                });
+                              },
+                              child: Container(
+                                color: Colors.red,
+                                child: Column(children: [
+                                  const Text(
+                                    'DEVICE IS ALARMING...Turn Off Alarm',
+                                    style: TextStyle(fontSize: 15.0),
+                                  ),
+                                  Icon(Icons.notifications_off, size: 50.0),
+                                ]),
+                              ),
+                            )
+                          : SizedBox(),
+                      GestureDetector(
+                          onTap: () {
+                            Get.to(DeviceDetails());
+                          },
+                          child: AddPackageGaurd()),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

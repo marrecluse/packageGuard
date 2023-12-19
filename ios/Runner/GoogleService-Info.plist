@@ -2,6 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CLIENT_ID</key>
+	<string>1025977464909-eklk66vfku47ec1v9v1nuvkvdse9guvj.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.1025977464909-eklk66vfku47ec1v9v1nuvkvdse9guvj</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>1025977464909-3pant8dlnju4nui1rm2ouoilirf2epci.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
 	<string>AIzaSyCSdm1Hlof2xvtWfn8pZLTidkrfZJ2-Sig</string>
 	<key>GCM_SENDER_ID</key>
@@ -9,7 +15,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.example.packageguard</string>
+	<string>com.example.package</string>
 	<key>PROJECT_ID</key>
 	<string>packageguard-d517e</string>
 	<key>STORAGE_BUCKET</key>
@@ -25,6 +31,8 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:1025977464909:ios:728240b9b4c7d84f240404</string>
+	<string>1:1025977464909:ios:2d93418a579cef2a240404</string>
+	<key>DATABASE_URL</key>
+	<string>https://packageguard-d517e-default-rtdb.asia-southeast1.firebasedatabase.app</string>
 </dict>
 </plist>

@@ -44,7 +44,6 @@ dependencies:
   cloud_firestore: ^4.11.0
   firebase_storage: ^11.4.0
   path: ^1.8.3
-  flutter_blue: ^0.8.0
   permission_handler: ^11.0.1
   mailer: ^6.0.1
   velocity_x: ^4.1.1
@@ -53,7 +52,7 @@ dependencies:
   http: ^1.1.0
   firebase_database: ^10.3.4
   shared_preferences: ^2.2.2
-  wifi_scan: ^0.4.0+2
+  wifi_scan: ^0.4.1
   timeago: ^3.6.0
   share_plus: ^7.2.1
   volume_controller: ^2.0.7

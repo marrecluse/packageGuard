@@ -5,12 +5,20 @@ import 'dart:core';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_blue/flutter_blue.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:packageguard/Utils/app_images.dart';
 import 'package:packageguard/Views/AddPackageGuard/Bluetooth.dart';
 import 'package:packageguard/Views/Wifi_Connect/wifi_screen.dart';
+import 'package:packageguard/Views/testBluetooth.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:packageguard/Widgets/characteristic_tile.dart';
+import 'package:packageguard/screens/device_screen.dart';
+import 'package:packageguard/screens/scan_screen.dart';
+
+
+
 import 'package:velocity_x/velocity_x.dart';
 import 'package:wifi_scan/wifi_scan.dart';
 import '../../Utils/app_colors.dart';
@@ -54,6 +62,7 @@ class WifiController extends GetxController {
 // }
 
 class WifiConnect extends StatefulWidget {
+
   const WifiConnect({super.key});
 
   @override
@@ -64,10 +73,11 @@ bool isPasswordVisible = false;
 List? wifiTitle;
 
 class _WifiConnectState extends State<WifiConnect> {
+  late BluetoothCharacteristic c;
   final ConnectedDevicesController _controller =
       Get.find<ConnectedDevicesController>();
   late BuildContext listViewContext;
-  late BluetoothController bluetoothController;
+  // late BluetoothController bluetoothController;
   late WifiController? wifiController;
   BluetoothDevice? connectedDevice;
   BluetoothCharacteristic? characteristic;
@@ -164,15 +174,27 @@ class _WifiConnectState extends State<WifiConnect> {
     _stopListeningToScanResults();
   }
 
-  void _sendWifiCredentials() {
-    String ssid = _ssidController.text;
-    String password = _passwordController.text;
-    getCurrentUserToken();
-    // Format the data to be sent to ESP32 (customize as per your ESP32 requirements)
-    String? wifiData =
-        "$ssid,$password,$userId,Ag1O02cdXwgF8DEehiuXfkdXHbq1,eyJhbGciOiJSUzI1NiIsImtpZCI6IjNhM2JkODk4ZGE1MGE4OWViOWUxY2YwYjdhN2VmZTM1OTNkNDEwNjgiLCJ0eXAiOiJKV1QifQ.eyJuYW1lIjoiRmFpc2FsIFNhZWVkIiwiaXNzIjoiaHR0cHM6Ly9zZWN1cmV0b2tlbi5nb29nbGUuY29tL3BhY2thZ2VndWFyZC1kNTE3ZSIsImF1ZCI6InBhY2thZ2VndWFyZC1kNTE3ZSIsImF1dGhfdGltZSI6MTcwMTM2MDA2MiwidXNlcl9pZCI6IkFnMU8wMmNkWHdnRjhERWVoaXVYZmtkWEhicTEiLCJzdWIiOiJBZzFPMDJjZFh3Z0Y4REVlaGl1WGZrZFhIYnExIiwiaWF0IjoxNzAxNDUyNTg2LCJleHAiOjE3MDE0NTYxODYsImVtYWlsIjoiZmFpc2Fsc2FlZWRAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJmaXJlYmFzZSI6eyJpZGVudGl0aWVzIjp7ImVtYWlsIjpbImZhaXNhbHNhZWVkQGdtYWlsLmNvbSJdfSwic2lnbl9pbl9wcm92aWRlciI6InBhc3N3b3JkIn19.bCkURk3rQxl5oQ8jbWEqfPrYViF3OU0xqdRtT9DKvnaV3aOwV69Uw_hw2STCX1Rx8mTLRdxJx6eN9siCG-HakqL5Z7iB_wFJKfNnc9cTXj9l14YksbS89KfQEKzz1THEvocngJ_4QNY6-ywuV9dZZxFg7bVqbCieWk2QJQSmqJeAlEGW05TJ1FZrPmICNRWSxehdvuLINVXCUNt34vHLN1PPMkfx7PX_lWeRK1eGSFTsx5Vdy_y2LvXYoJv3T22q_u9ePf84MOvBBWWdM7ASXXsgz4dJ5OT6Sxp8T5R66vZCyXSM9a5VtFgkC1i6LQUp-IU-n0uQPqC1qqZ-";
+  Future _sendWifiCredentials() async{
+    // String ssid = _ssidController.text;
+    // String password = _passwordController.text;
+    // getCurrentUserToken();
+    // // Format the data to be sent to ESP32 (customize as per your ESP32 requirements)
+    // String? wifiData =
+    //     "$ssid,$password,$userId,Ag1O02cdXwgF8DEehiuXfkdXHbq1,eyJhbGciOiJSUzI1NiIsImtpZCI6IjNhM2JkODk4ZGE1MGE4OWViOWUxY2YwYjdhN2VmZTM1OTNkNDEwNjgiLCJ0eXAiOiJKV1QifQ.eyJuYW1lIjoiRmFpc2FsIFNhZWVkIiwiaXNzIjoiaHR0cHM6Ly9zZWN1cmV0b2tlbi5nb29nbGUuY29tL3BhY2thZ2VndWFyZC1kNTE3ZSIsImF1ZCI6InBhY2thZ2VndWFyZC1kNTE3ZSIsImF1dGhfdGltZSI6MTcwMTM2MDA2MiwidXNlcl9pZCI6IkFnMU8wMmNkWHdnRjhERWVoaXVYZmtkWEhicTEiLCJzdWIiOiJBZzFPMDJjZFh3Z0Y4REVlaGl1WGZrZFhIYnExIiwiaWF0IjoxNzAxNDUyNTg2LCJleHAiOjE3MDE0NTYxODYsImVtYWlsIjoiZmFpc2Fsc2FlZWRAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJmaXJlYmFzZSI6eyJpZGVudGl0aWVzIjp7ImVtYWlsIjpbImZhaXNhbHNhZWVkQGdtYWlsLmNvbSJdfSwic2lnbl9pbl9wcm92aWRlciI6InBhc3N3b3JkIn19.bCkURk3rQxl5oQ8jbWEqfPrYViF3OU0xqdRtT9DKvnaV3aOwV69Uw_hw2STCX1Rx8mTLRdxJx6eN9siCG-HakqL5Z7iB_wFJKfNnc9cTXj9l14YksbS89KfQEKzz1THEvocngJ_4QNY6-ywuV9dZZxFg7bVqbCieWk2QJQSmqJeAlEGW05TJ1FZrPmICNRWSxehdvuLINVXCUNt34vHLN1PPMkfx7PX_lWeRK1eGSFTsx5Vdy_y2LvXYoJv3T22q_u9ePf84MOvBBWWdM7ASXXsgz4dJ5OT6Sxp8T5R66vZCyXSM9a5VtFgkC1i6LQUp-IU-n0uQPqC1qqZ-";
 
-    _sendData(wifiData);
+    // _sendData(wifiData);
+  final characteristicTileInstance = CharacteristicTile(characteristic: c,descriptorTiles: [],);
+
+      String? wifiData =
+        "P,abdul@0301";
+
+  // await characteristicTileInstance.
+
+
+
+
+
+
   }
 
   void _sendData(String dataString) async {
@@ -223,16 +245,18 @@ class _WifiConnectState extends State<WifiConnect> {
     });
     // Access user data in initState or another method
     userData = userController.userData as Map<String, dynamic>;
-    bluetoothController = Get.find<BluetoothController>();
+    // bluetoothController = Get.find<BluetoothController>();
     wifiController = Get.find<WifiController>();
     wifiTitle = wifiController?.ssidList.value;
     print('the value is  $wifiTitle');
-    connectedDevice = bluetoothController.connectedDevice.value;
-    characteristic = bluetoothController.characteristic.value;
+    // connectedDevice = bluetoothController.connectedDevice.value;
+    // characteristic = bluetoothController.characteristic.value;
 
     // print(userData);
     // print(userData['ProfileImage']);
   }
+
+
 
   @override
   Widget build(BuildContext context) {

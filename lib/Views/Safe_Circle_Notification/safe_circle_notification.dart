@@ -5,12 +5,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:packageguard/Utils/app_images.dart';
 import 'package:packageguard/Views/Safe_Circle_Notification/components/real_timedata.dart';
+import 'package:packageguard/Views/Safe_Circle_Notification/components/safe_noticication%20_alerts2.dart';
 import '../../Utils/app_colors.dart';
 import '../../Widgets/custom_appbar.dart';
 import '../../Widgets/custom_text.dart';
 import '../../Widgets/drawer.dart';
 import '../Login/login.dart';
 import 'components/safe_notification_alerts.dart';
+
 
 class SafeCircleNotification extends StatefulWidget {
   const SafeCircleNotification({super.key});
@@ -33,47 +35,62 @@ class _SafeCircleNotificationState extends State<SafeCircleNotification> {
     print(userData);
     print(userData['ProfileImage']);
   }
-
+final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
   final profileImage = userData['ProfileImage'].toString().trim();
+    Future<void> _refreshData() async {
+
+    setState(() {
+      userData = userController.userData as Map<String, dynamic>;
+      initState();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         drawer: MyDrawer(),
-        body: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CustomAppBar(
-                image: profileImage,
-                title: '${userData['Name']}',
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
-                child: CustomText(
-                  title: 'Safe Circle Notification',
-                  fontSize: 13.sp,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.navyblue,
+        body: RefreshIndicator(
+          color: Colors.white,
+          backgroundColor: AppColors.navyblue,
+          key: _refreshIndicatorKey,
+          onRefresh: _refreshData,
+          child: SingleChildScrollView(
+                        physics: const AlwaysScrollableScrollPhysics(),
+
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CustomAppBar(
+                  image: profileImage,
+                  title: '${userData['Name']}',
                 ),
-              ),
-              // SafeNotificationAlerts()
-              SizedBox(
-                height: 580.h,
-                width: MediaQuery.of(context).size.width,
-                // child: ListView.builder(
-                //   physics: const BouncingScrollPhysics(),
-                //   itemCount: 1,
-                //   itemBuilder: (context, index) {
-                //     return const SafeNOtificationsAlerts2();
-                //   },
-                // ),
-                child: Container(
-                  child: SafeNOtificationsAlerts2(),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
+                  child: CustomText(
+                    title: 'Safe Circle Notification',
+                    fontSize: 13.sp,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.navyblue,
+                  ),
                 ),
-              ),
-            ],
+                // SafeNotificationAlerts()
+                SizedBox(
+                  height: 580.h,
+                  width: MediaQuery.of(context).size.width,
+                  // child: ListView.builder(
+                  //   physics: const BouncingScrollPhysics(),
+                  //   itemCount: 1,
+                  //   itemBuilder: (context, index) {
+                  //     return const SafeNOtificationsAlerts2();
+                  //   },
+                  // ),
+                  child: Container(
+                    child: SafeNOtificationsAlerts2(),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

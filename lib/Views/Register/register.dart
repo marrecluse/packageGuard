@@ -139,6 +139,7 @@ class _SignUpState extends State<SignUp> {
       // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       //   content: Text("Registration Failed: $e"),
       // ));
+      print(e);
       Get.snackbar(
         'Registration Failed',
         'Please check the fields',
@@ -147,6 +148,7 @@ class _SignUpState extends State<SignUp> {
       );
     }
   }
+
 
   Future<String?> uploadImageToFirebaseStorage(File imageFile) async {
     try {

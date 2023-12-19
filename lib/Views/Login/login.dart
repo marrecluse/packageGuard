@@ -90,7 +90,7 @@ class _SignInState extends State<SignIn> {
     AlertDialog alert = AlertDialog(
       content: new Row(
         children: [
-          CircularProgressIndicator(),
+          CircularProgressIndicator(backgroundColor: AppColors.navyblue,color: Colors.white,strokeWidth: 10,),
           Container(margin: EdgeInsets.only(left: 5), child: Text("Loading")),
         ],
       ),
@@ -386,6 +386,11 @@ if (uEmail != null) {
                       ),
                     ),
                     CustomSizeBox(height: 29.h),
+                            SizedBox(height: 12,),
+                    isLoading ?
+                    Center(child: CircularProgressIndicator(backgroundColor: AppColors.navyblue,color: Colors.white,strokeWidth: 10,)
+                    ) : SizedBox(),
+                    SizedBox(height: 10,),
                     Center(
                       child:ElevatedButton(
                               style: ElevatedButton.styleFrom(
@@ -415,10 +420,7 @@ if (uEmail != null) {
                                 color: AppColors.btntext,
                               )),
                     ),
-                    SizedBox(height: 12,),
-                    isLoading ?
-                    Center(child: CircularProgressIndicator()
-                    ) : SizedBox(),
+            
                   
                     CustomSizeBox(height: 10.h),
                     Center(

@@ -81,7 +81,7 @@ class _NotificationSectionState extends State<NotificationSection> {
                     Map<dynamic, dynamic> alertsData = deviceData['alerts'];
 
                     // bool alarmStatus = alertsData['alarm'];
-                    print("abdul:deviceData :  $deviceData");
+                    debugPrint("abdul:deviceData :  $deviceData");
                     String alertTimestamp = alertsData['timeStamp'];
                     debugPrint("alertTime: ${alertsData['timeStamp']}");
 

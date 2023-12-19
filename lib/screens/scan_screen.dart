@@ -3,6 +3,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:packageguard/Utils/app_colors.dart';
+import 'package:packageguard/Widgets/custom_text.dart';
 
 
 
@@ -78,7 +80,6 @@ try {
 } catch (e) {
   print(e);
 }
-await FlutterBluePlus.adapterState.where((val) => val == BluetoothAdapterState.on).first;
 
 
       int divisor = Platform.isAndroid ? 8 : 1;
@@ -127,7 +128,7 @@ await FlutterBluePlus.adapterState.where((val) => val == BluetoothAdapterState.o
         backgroundColor: Colors.red,
       );
     } else {
-      return FloatingActionButton(child: const Text("SCAN"), onPressed: onScanPressed);
+      return FloatingActionButton(child: CustomText(title: 'SCAN',fontWeight: FontWeight.bold), onPressed: onScanPressed);
     }
   }
 
@@ -164,8 +165,10 @@ await FlutterBluePlus.adapterState.where((val) => val == BluetoothAdapterState.o
     return ScaffoldMessenger(
       key: Snackbar.snackBarKeyB,
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Find Devices'),
+        appBar: 
+        AppBar(
+          backgroundColor: AppColors.navyblue,
+          title: CustomText(title: 'Find Devices',fontWeight: FontWeight.bold,fontSize: 21,),
         ),
         body: RefreshIndicator(
           onRefresh: onRefresh,

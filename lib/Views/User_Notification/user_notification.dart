@@ -25,7 +25,6 @@ class _UserNotificationState extends State<UserNotification> {
   @override
   void initState() {
     super.initState();
-
     userData = userController.userData as Map<String, dynamic>;
     print(userData);
     print(userData['ProfileImage']);
@@ -34,7 +33,6 @@ class _UserNotificationState extends State<UserNotification> {
   @override
   Widget build(BuildContext context) {
     final profileImage = userData['ProfileImage'].toString().trim();
-
     return SafeArea(
       child: Scaffold(
         drawer: MyDrawer(),

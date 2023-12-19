@@ -184,6 +184,7 @@ class _AddSafePersonState extends State<AddSafePerson> {
     User? user = FirebaseAuth.instance.currentUser;
     print('USER DATA: ${user}');
     print('USER ID: ${user?.uid}');
+    
 
     //Get userID of the receiver
     // getReceiverUserId(userEmail);
@@ -196,11 +197,32 @@ class _AddSafePersonState extends State<AddSafePerson> {
       "timestamp": Timestamp.now(),
     };
 
+  // Query Firestore to check if the same notification already exists
+  final existingNotification = await FirebaseFirestore.instance
+      .collection('notifications')
+      .doc(user?.uid)
+      .collection("userNotification")
+      .where('notification', isEqualTo: titleText)
+      .get();
+
+
+
+
+
+
+  if (existingNotification.docs.isEmpty) {
+
     await FirebaseFirestore.instance
         .collection('notifications')
         .doc(user?.uid)
         .collection("userNotification")
         .add(notificationData);
+  
+  }else{
+    debugPrint('Notification already exists');
+  }
+  
+  
   }
 
   void saveCircleNotificationToFirestore(String userEmail, String userName,
@@ -256,16 +278,35 @@ class _AddSafePersonState extends State<AddSafePerson> {
       "senderId": senderId
     };
 
-    await FirebaseFirestore.instance
-        .collection('notifications')
-        .doc(user?.uid)
-        .collection("safeCircleNotification")
-        .add(notificationData);
-    await FirebaseFirestore.instance
-        .collection('notifications')
-        .doc(receiverUserId)
-        .collection("safeCircleNotification")
-        .add(notificationData);
+
+    // Query Firestore to check if the same notification already exists for the receiverId
+  final existingNotification = await FirebaseFirestore.instance
+      .collection('notifications')
+      .doc(receiverId)
+      .collection('safeCircleNotification')
+      .where('notification', isEqualTo: notification)
+      .get();
+
+  if (existingNotification.docs.isEmpty) {
+
+   await Future.wait([
+      FirebaseFirestore.instance
+          .collection('notifications')
+          .doc(user?.uid)
+          .collection("safeCircleNotification")
+          .add(notificationData),
+      FirebaseFirestore.instance
+          .collection('notifications')
+          .doc(receiverId)
+          .collection("safeCircleNotification")
+          .add(notificationData),
+    ]);
+  }
+  else{
+    debugPrint('Notification already sent');
+  }
+
+
   }
 
   Future<String> getTargetDeviceToken(
@@ -301,8 +342,9 @@ class _AddSafePersonState extends State<AddSafePerson> {
               'title': title,
               'body': body,
 
-              'icon':
+                         'icon':
                   'https://firebasestorage.googleapis.com/v0/b/packageguard-d517e.appspot.com/o/app_logo%2Fic_launcher.png?alt=media&token=aa85c460-d622-4243-8ca0-bf9d81ed683f' // This should point to the icon image
+ 
             },
             'data': <String, dynamic>{
               'click_action': 'FLUTTER_NOTIFICATION_CLICK',
@@ -314,6 +356,9 @@ class _AddSafePersonState extends State<AddSafePerson> {
           },
         ),
       );
+           Timer(Duration(seconds: 3), () {
+          Get.to(() => EditSafeCircle());
+        });
       print("here i am");
     } catch (e) {
       print("error push notification");
@@ -360,6 +405,7 @@ class _AddSafePersonState extends State<AddSafePerson> {
 
               'icon':
                   'https://firebasestorage.googleapis.com/v0/b/packageguard-d517e.appspot.com/o/app_logo%2Fic_launcher.png?alt=media&token=aa85c460-d622-4243-8ca0-bf9d81ed683f' // This should point to the icon image
+          
             },
             'data': <String, dynamic>{
               'click_action': 'FLUTTER_NOTIFICATION_CLICK',
@@ -371,7 +417,11 @@ class _AddSafePersonState extends State<AddSafePerson> {
           },
         ),
       );
+       Timer(Duration(seconds: 3), () {
+          Get.to(() => EditSafeCircle());
+        });
       print("notification sent to target device");
+
     } catch (e) {
       print("error push notification");
     }
@@ -464,14 +514,22 @@ class _AddSafePersonState extends State<AddSafePerson> {
     String password = 'jwgrkjjpndqsrxnk';
     final smtpServer = gmail(username, password);
     final mailmessage = mailer.Message()
-      ..from = Address(username, 'Mail Service')
+      ..from = Address(username, 'PackageGuard')
       ..recipients.add(recipientEmail)
-      ..subject = 'Mail '
-      ..text = 'Message: $mailMessage';
+      ..subject = 'Safe Circle'
+      ..text = '$mailMessage';
 
     try {
-      await send(mailmessage, smtpServer);
-      AppConstants.showCustomSnackBar('Email Sent Successfully');
+      // await send(mailmessage, smtpServer);
+      final sendReport = await send(mailmessage, smtpServer);
+      debugPrint('Message sent: ' + sendReport.toString());
+      if (sendReport.toString().isNotEmpty) {
+        AppConstants.showCustomSnackBar('Email Sent Successfully');
+        AppConstants.showCustomSnackBar("Safe Circle request sent");
+        Timer(Duration(seconds: 5), () {
+          Get.to(() => EditSafeCircle());
+        });
+      }
     } catch (e) {
       if (kDebugMode) {
         print(e.toString());
@@ -586,8 +644,6 @@ class _AddSafePersonState extends State<AddSafePerson> {
               .doc(receiverUserId)
               .set(safeCircleData);
           isLoading = false;
-
-          AppConstants.showCustomSnackBar("Safe Circle request sent");
         } else {
           isLoading = false;
           AppConstants.showCustomSnackBar("Failed to get admin's email");
@@ -910,6 +966,8 @@ class _AddSafePersonState extends State<AddSafePerson> {
                                           userData['Name']);
                                     });
 
+  
+
                                     saveUserNotificationToFirestore(
                                         emailController.text.toString(),
                                         nameController.text.toString(),
@@ -922,12 +980,12 @@ class _AddSafePersonState extends State<AddSafePerson> {
                                     // );
 
                                     // addNotification();
-                                    
-                                        Get.to(() => EditSafeCircle());
-
                                   } else {
                                     AppConstants.showCustomSnackBar(
                                         'Not an App user.');
+                                    Timer(Duration(seconds: 3), () {
+                                      Get.to(() => EditSafeCircle());
+                                    });
                                   }
                                 } else {
                                   AppConstants.showCustomSnackBar(
@@ -964,7 +1022,7 @@ class _AddSafePersonState extends State<AddSafePerson> {
               ),
             ),
             CustomSizeBox(height: 30.h),
-            isLoading ? CircularProgressIndicator() : SizedBox(),
+            isLoading ? CircularProgressIndicator(strokeWidth: 8.0,backgroundColor: AppColors.navyblue,color: Colors.white,) : SizedBox(),
             CustomSizeBox(height: 10.h),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 20.w),

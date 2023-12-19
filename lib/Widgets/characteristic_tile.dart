@@ -56,9 +56,9 @@ class _CharacteristicTileState extends State<CharacteristicTile> {
     }
   }
 
-  Future onWritePressed() async {
+  Future onWritePressed(List<int> credentials) async {
     try {
-      await c.write(_getRandomBytes(), withoutResponse: c.properties.writeWithoutResponse);
+      await c.write(credentials, withoutResponse: c.properties.writeWithoutResponse,allowLongWrite:true);
       Snackbar.show(ABC.c, "Write: Success", success: true);
       if (c.properties.read) {
         await c.read();
@@ -110,7 +110,11 @@ class _CharacteristicTileState extends State<CharacteristicTile> {
     return TextButton(
         child: Text(withoutResp ? "WriteNoResp" : "Write"),
         onPressed: () async {
-          await onWritePressed();
+          String? wifiData =
+        "P,abdul@0301,Ag1O02cdXwgF8DEehiuXfkdXHbq1,eyJhbGciOiJSUzI1NiIsImtpZCI6IjNhM2JkODk4ZGE1MGE4OWViOWUxY2YwYjdhN2VmZTM1OTNkNDEwNj";
+
+          List<int> cData=wifiData.codeUnits; 
+          await onWritePressed(cData);
           if (mounted) {
             setState(() {});
           }
