@@ -36,11 +36,11 @@ class _DeviceAlertsDataState extends State<DeviceAlertsData> {
   //   // Add more references as needed
   // ];
   DatabaseReference ref = FirebaseDatabase.instance
-      .ref("packageGuard/userId1/devices/deviceId1/data");
+      .ref("packageGuard/Ag1O02cdXwgF8DEehiuXfkdXHbq1/devices/SN83C048DF9D4/alerts");
 
   final DatabaseReference reference = FirebaseDatabase.instance.ref();
   Future<List<String>> getDataFromReferences() async {
-    List<String> data = [];
+    List<String> alerts = [];
 
     // Replace 'reference1' and 'reference2' with your actual database references
     // DatabaseEvent snapshot1 = await.ref('packageGuard/userId1/devices/deviceId1/timestamps').once(),
@@ -50,7 +50,7 @@ class _DeviceAlertsDataState extends State<DeviceAlertsData> {
     // data.addAll(List<String>.from(snapshot1.value));
     // data.addAll(List<String>.from(snapshot2.value));
 
-    return data;
+    return alerts;
   }
 
   List<Map<String, dynamic>> notificationList = [];
@@ -159,15 +159,16 @@ class _DeviceAlertsDataState extends State<DeviceAlertsData> {
                     } else {
                       Map<dynamic, dynamic> map =
                           snapshot.data!.snapshot.value as dynamic;
+print("map the: $map");
+                      // List<dynamic> list = map.values.toList();
 
-                      List<dynamic> list = map.values.toList();
-
-                      Map<dynamic, dynamic> alertList = list[0];
+                      //           print("List is $list");
+                      // Map<dynamic, dynamic> alertList = list[0];
 
                       List<Widget> notification = [];
 
-                      alertList.forEach((key, value) {
-                        if ((key as String) == "packageMoved" &&
+                      map.forEach((key, value) {
+                        if ((key as String) == "ALERT_PGMOVED" &&
                             value == true) {
                           notification.add(
                             Column(
@@ -215,7 +216,7 @@ class _DeviceAlertsDataState extends State<DeviceAlertsData> {
                             ),
                           );
                         }
-                        if ((key as String) == "alarm" && value == true) {
+                        if ((key as String) == "ALARM_SCALEREMOVED" && value == true) {
                           notification.add(
                             Column(
                               children: [
@@ -237,7 +238,7 @@ class _DeviceAlertsDataState extends State<DeviceAlertsData> {
                                       //                 index == 17
                                       //             ? AppImages.greenIcon
                                       //             : AppImages.checkMark,
-                                      AppImages.checkMark,
+                                      AppImages.alram,
                                       height: 23.h,
                                       width: 23.w,
                                     ),
@@ -266,7 +267,7 @@ class _DeviceAlertsDataState extends State<DeviceAlertsData> {
                           color: Vx.black,
                         );
 
-                        if ((key as String) == "packageRemoved" &&
+                        if ((key as String) == "ALERT_SCALEREMOVED" &&
                             value == true) {
                           notification.add(
                             Column(
@@ -315,7 +316,7 @@ class _DeviceAlertsDataState extends State<DeviceAlertsData> {
                           );
                         }
 
-                        if ((key as String) == "packageAdded" &&
+                        if ((key as String) == "ALERT_SCALEADDED" &&
                             value == true) {
                           notification.add(
                             Column(
@@ -413,7 +414,7 @@ class _DeviceAlertsDataState extends State<DeviceAlertsData> {
                         }
                       });
 
-                      print('the list values is $list');
+                      // print('the list values is $list');
                       return Column(
                         children: [
                           ListView.builder(

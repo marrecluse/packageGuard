@@ -3,6 +3,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:packageguard/Utils/app_colors.dart';
 import 'package:packageguard/Widgets/custom_text.dart';
 
@@ -14,14 +17,43 @@ import '../Widgets/system_device_tile.dart';
 import '../Widgets/scan_result_tile.dart';
 import '../Utils/extra.dart';
 
+//Global keys
+
+
+
+class BluetoothController extends GetxController {
+  late BluetoothDevice _savedDevice;
+  late String _savedUuid;
+
+  void saveDevice(BluetoothDevice device) {
+    _savedDevice = device;
+  }
+
+  void saveUuid(String uuid) {
+    _savedUuid = uuid;
+  }
+
+
+  BluetoothDevice get savedDevice => _savedDevice;
+  String get savedUuid => _savedUuid;
+}
+
+
+
+
+
+
 class ScanScreen extends StatefulWidget {
-  const ScanScreen({Key? key}) : super(key: key);
+
+  const ScanScreen({Key? key1}) : super(key: key1);
 
   @override
   State<ScanScreen> createState() => _ScanScreenState();
 }
 
 class _ScanScreenState extends State<ScanScreen> {
+    BluetoothController bluetoothController = Get.put(BluetoothController());
+
   List<BluetoothDevice> _systemDevices = [];
   List<ScanResult> _scanResults = [];
   bool _isScanning = false;
@@ -105,8 +137,11 @@ try {
     device.connectAndUpdateStream().catchError((e) {
       Snackbar.show(ABC.c, prettyException("Connect Error:", e), success: false);
     });
+     // Save the device to the controller
+  bluetoothController.saveDevice(device); 
     MaterialPageRoute route = MaterialPageRoute(
         builder: (context) => DeviceScreen(device: device), settings: RouteSettings(name: '/DeviceScreen'));
+
     Navigator.of(context).push(route);
   }
 
@@ -121,6 +156,7 @@ try {
   }
 
   Widget buildScanButton(BuildContext context) {
+    
     if (FlutterBluePlus.isScanningNow) {
       return FloatingActionButton(
         child: const Icon(Icons.stop),
@@ -144,7 +180,9 @@ try {
               ),
             ),
             onConnect: () => onConnectPressed(d),
+            
           ),
+        
         )
         .toList();
   }

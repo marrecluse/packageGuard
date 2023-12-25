@@ -1,5 +1,6 @@
 // ignore_for_file: unused_import
 
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -18,7 +19,10 @@ import 'package:packageguard/Views/Register/register.dart';
 import 'package:packageguard/Views/User_Notification/user_notification.dart';
 import 'package:packageguard/Views/Wifi_Connect/wifi_connect.dart';
 import 'package:packageguard/Views/Wifi_Connect/wifi_screen.dart';
+import 'package:packageguard/Widgets/characteristic_tile.dart';
 import 'package:packageguard/push_notifiy.dart';
+import 'package:packageguard/screens/device_screen.dart';
+import 'package:packageguard/screens/scan_screen.dart';
 import 'Views/Login/login.dart';
 import 'Views/Splash_Screen/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -76,15 +80,19 @@ class MyApp extends StatelessWidget {
       designSize: const Size(393, 844),
       builder: (context, child) {
         return GetMaterialApp(
+          
           debugShowCheckedModeBanner: false,
           title: "Place Packages",
+
           home: SplashScreen(),
           initialBinding: BindingsBuilder(
             () {
               Get.lazyPut(() => WifiController());
               Get.lazyPut(() => UserController());
               Get.lazyPut(() => UserUidController());
+
               // Get.lazyPut(() => BluetoothController());
+              // Get.lazyPut(() => BluetoothControllerr());
               Get.put(ConnectedDevicesController());
 
               Get.put(() => AnimationController);
@@ -98,3 +106,15 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+

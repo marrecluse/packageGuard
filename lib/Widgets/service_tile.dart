@@ -14,23 +14,36 @@ class ServiceTile extends StatelessWidget {
     return Text(uuid, style: TextStyle(fontSize: 13));
   }
 
+
+
+
+
+
   @override
   Widget build(BuildContext context) {
+
+
     return characteristicTiles.isNotEmpty
-        ? ExpansionTile(
-            title: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                const Text('Service', style: TextStyle(color: Colors.blue)),
-                buildUuid(context),
-              ],
+        ? Visibility(
+          visible: false,
+          child: ExpansionTile(
+              title: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  const Text('Services', style: TextStyle(color: Colors.blue)),
+                  buildUuid(context),
+                ],
+              ),
+              children: characteristicTiles,
             ),
-            children: characteristicTiles,
-          )
-        : ListTile(
-            title: const Text('Service'),
-            subtitle: buildUuid(context),
-          );
+        )
+        : Visibility(
+          visible: false,
+          child: ListTile(
+              title: const Text('Service'),
+              subtitle: buildUuid(context),
+            ),
+        );
   }
 }

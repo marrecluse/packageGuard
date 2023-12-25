@@ -51,6 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+
   void getAlarmStatus() {
     print("function started");
 
@@ -114,9 +115,9 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Scaffold(
         drawer: MyDrawer(),
         body: RefreshIndicator(
-          backgroundColor: AppColors.navyblue,
           color: Colors.white,
-          strokeWidth: 4,
+          backgroundColor: AppColors.navyblue,
+          strokeWidth: 4.0,
           onRefresh: _refreshData,
           child: SingleChildScrollView(
             child: Column(
@@ -125,31 +126,32 @@ class _HomeScreenState extends State<HomeScreen> {
                   image:profileImage,
                   // image: userData['method']=='emailAndPass' ? emailprofileImage : guserPicture,
                   title: '${userData['Name'] ?? 'User'} ',
-        
+                
                   // title: 'Abdul',
                 ),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 20.w),
                   child: Column(
                     children: [
-        
+                
                       //Notification container
                       NotificationSection(),
-        
-        
-        
+                
+                
+                
                       SizedBox(height: 12.h),
                       
                       GestureDetector(
                         onTap: () {
                           Get.to(() => ScanScreen());
-        
+                
                         },
                         child: Container(
                           // height: 30.h,
                           padding: EdgeInsets.symmetric(vertical: 15.h),
                           width: 393.w,
                           decoration: BoxDecoration(
+                              // color: AppColors.navyblue,
                               color: AppColors.navyblue,
                               borderRadius: BorderRadius.circular(8.r)),
                           child: Center(

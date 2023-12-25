@@ -22,6 +22,20 @@ class UserNotification extends StatefulWidget {
 class _UserNotificationState extends State<UserNotification> {
   final userController = Get.find<UserController>();
   Map<String, dynamic> userData = {};
+
+
+
+
+
+  Future<void> _refreshData() async {
+    setState(() {
+      userData = userController.userData as Map<String, dynamic>;
+      initState();
+    });
+  }
+
+
+
   @override
   void initState() {
     super.initState();
@@ -36,43 +50,46 @@ class _UserNotificationState extends State<UserNotification> {
     return SafeArea(
       child: Scaffold(
         drawer: MyDrawer(),
-        body: SingleChildScrollView(
-          physics: const NeverScrollableScrollPhysics(),
-          child: Column(
-            children: [
-              CustomAppBar(
-                image: profileImage,
-                title: '${userData['Name'] ?? 'User'}',
-              ),
-              GestureDetector(
+        body: RefreshIndicator(
+          onRefresh: _refreshData,
+          child: SingleChildScrollView(
+            physics: const NeverScrollableScrollPhysics(),
+            child: Column(
+              children: [
+                CustomAppBar(
+                  image: profileImage,
+                  title: '${userData['Name'] ?? 'User'}',
+                ),
+                GestureDetector(
+                    onTap: () {
+                      //  Get.to(() => const SafeCircleNotification());
+                    },
+                    child: UserNotificationData()),
+                SizedBox(height: 20.h),
+                GestureDetector(
                   onTap: () {
-                    //  Get.to(() => const SafeCircleNotification());
+                    Get.to(() => const SafeCircleNotification());
                   },
-                  child: UserNotificationData()),
-              SizedBox(height: 20.h),
-              GestureDetector(
-                onTap: () {
-                  Get.to(() => const SafeCircleNotification());
-                },
-                child: Container(
-                  //height: 30.h,
-                  padding: EdgeInsets.symmetric(vertical: 15.h),
-                  width: 350.w,
-                  decoration: BoxDecoration(
-                      color: AppColors.navyblue,
-                      borderRadius: BorderRadius.circular(8.r)),
-                  child: Center(
-                    child: CustomText(
-                      title: "Safe Circle Notification",
-                      fontSize: 13.sp,
-                      fontWeight: FontWeight.w500,
-                      color: AppColors.btntext,
+                  child: Container(
+                    //height: 30.h,
+                    padding: EdgeInsets.symmetric(vertical: 15.h),
+                    width: 350.w,
+                    decoration: BoxDecoration(
+                        color: AppColors.navyblue,
+                        borderRadius: BorderRadius.circular(8.r)),
+                    child: Center(
+                      child: CustomText(
+                        title: "Safe Circle Notification",
+                        fontSize: 13.sp,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.btntext,
+                      ),
                     ),
                   ),
                 ),
-              ),
-              SizedBox(height: 10.h),
-            ],
+                SizedBox(height: 10.h),
+              ],
+            ),
           ),
         ),
       ),

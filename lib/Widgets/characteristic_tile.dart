@@ -3,10 +3,18 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_rx/src/rx_types/rx_types.dart';
+import 'package:get/get_state_manager/src/simple/get_controllers.dart';
+import 'package:packageguard/Views/Wifi_Connect/wifi_connect.dart';
+import 'package:packageguard/screens/device_screen.dart';
 
 import "../Utils/snackbar.dart";
 
 import "descriptor_tile.dart";
+import 'package:get/get.dart';
+
 
 class CharacteristicTile extends StatefulWidget {
   final BluetoothCharacteristic characteristic;
@@ -33,6 +41,7 @@ class _CharacteristicTileState extends State<CharacteristicTile> {
       }
     });
   }
+    // final bluetoothController = Get.find<BluetoothController>();
 
   @override
   void dispose() {
@@ -55,10 +64,17 @@ class _CharacteristicTileState extends State<CharacteristicTile> {
       Snackbar.show(ABC.c, prettyException("Read Error:", e), success: false);
     }
   }
-
+ // bluetoothController.setCharacteristic(c);
   Future onWritePressed(List<int> credentials) async {
     try {
+                 
+// final bluetoothControllerr = Get.find<BluetoothControllerr>(); // Access the controller
+
+// Call the method to store the value of 'c'
+// bluetoothControllerr.setCharacteristic(c);
       await c.write(credentials, withoutResponse: c.properties.writeWithoutResponse,allowLongWrite:true);
+ 
+
       Snackbar.show(ABC.c, "Write: Success", success: true);
       if (c.properties.read) {
         await c.read();
@@ -87,6 +103,7 @@ class _CharacteristicTileState extends State<CharacteristicTile> {
   Widget buildUuid(BuildContext context) {
     String uuid = '0x${widget.characteristic.uuid.str.toUpperCase()}';
     return Text(uuid, style: TextStyle(fontSize: 13));
+
   }
 
   Widget buildValue(BuildContext context) {
@@ -111,7 +128,8 @@ class _CharacteristicTileState extends State<CharacteristicTile> {
         child: Text(withoutResp ? "WriteNoResp" : "Write"),
         onPressed: () async {
           String? wifiData =
-        "P,abdul@0301,Ag1O02cdXwgF8DEehiuXfkdXHbq1,eyJhbGciOiJSUzI1NiIsImtpZCI6IjNhM2JkODk4ZGE1MGE4OWViOWUxY2YwYjdhN2VmZTM1OTNkNDEwNj";
+        // "P,abdul@0301,Ag1O02cdXwgF8DEehiuXfkdXHbq1,eyJhbGciOiJSUzI1NiIsImtpZCI6IjNhM2JkODk4ZGE1MGE4OWViOWUxY2YwYjdhN2VmZTM1OTNkNDEwNj";
+        "TP-Link_CD3A,14000850";
 
           List<int> cData=wifiData.codeUnits; 
           await onWritePressed(cData);
@@ -159,6 +177,17 @@ class _CharacteristicTileState extends State<CharacteristicTile> {
             const Text('Characteristic'),
             buildUuid(context),
             buildValue(context),
+
+            ElevatedButton(onPressed: (){
+              // Get.to(WifiConnect(),
+              // arguments: {
+              //   "characteristic":
+              //   widget.characteristic
+              // });
+            }, child: Text(
+              'Send WiFi Credentials',
+              style: TextStyle(),
+            ))
           ],
         ),
         subtitle: buildButtonRow(context),
@@ -167,4 +196,6 @@ class _CharacteristicTileState extends State<CharacteristicTile> {
       children: widget.descriptorTiles,
     );
   }
+  
 }
+

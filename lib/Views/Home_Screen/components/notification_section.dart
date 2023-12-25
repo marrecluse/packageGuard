@@ -24,8 +24,11 @@ class _NotificationSectionState extends State<NotificationSection> {
   @override
   // final ref = FirebaseDatabase.instance
   //     .ref('packageGuard/userId1/devices/deviceId1/data');
-  final ref = FirebaseDatabase.instance.ref('packageGuard/userId1/devices/');
-  // final ref2 = FirebaseDatabase.instance
+
+        
+        
+        
+          // final ref2 = FirebaseDatabase.instance
   //     .ref('packageGuard/userId1/devices/deviceId1/timestamps');
   Future<void> updateAlertData() async {
     DatabaseReference alarmRef = FirebaseDatabase.instance
@@ -45,6 +48,17 @@ class _NotificationSectionState extends State<NotificationSection> {
   @override
   @override
   Widget build(BuildContext context) {
+  final user=FirebaseAuth.instance.currentUser;
+    final ref = FirebaseDatabase.instance
+        .ref()
+        .child('packageGuard')
+        .child(user!.uid.toString())
+        .child('devices')
+        .child('SN83C048DF9D4')
+        .child('alerts');
+        
+        
+
     return Container(
         height: 200.h,
         padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
@@ -76,12 +90,11 @@ class _NotificationSectionState extends State<NotificationSection> {
                     // Map deviceData = map['data'];
                     // Map<dynamic, dynamic> alertsData = deviceData['alerts'];
 
-                    Map deviceData = map['deviceId1'];
+                    // Map deviceData = map['deviceId1'];
 
-                    Map<dynamic, dynamic> alertsData = deviceData['alerts'];
+                    Map<dynamic, dynamic> alertsData = map['alerts'];
 
                     // bool alarmStatus = alertsData['alarm'];
-                    debugPrint("abdul:deviceData :  $deviceData");
                     String alertTimestamp = alertsData['timeStamp'];
                     debugPrint("alertTime: ${alertsData['timeStamp']}");
 
@@ -93,13 +106,24 @@ class _NotificationSectionState extends State<NotificationSection> {
                     // List<dynamic> timestampValues = alertsData['timeStamp'].toList();
 
                     List<dynamic> itemList = [];
+                    List<dynamic> alertTime = [];
                     bool packageAdded = alertsData['ALERT_SCALEADDED'];
-
+                    
+    int epochTimeInSeconds = int.parse(alertTimestamp);
+                          DateTime dateTime =
+                              DateTime.fromMillisecondsSinceEpoch(
+                                  epochTimeInSeconds * 1000);
+                          String formattedTime = timeago.format(
+                            dateTime,
+                            // locale: 'en_short',
+                          );
+            
                     void addItemToList() {
-                      if (packageAdded) {
-                        itemList.add("New Item");
+                        itemList.add("package arrived");
+                        alertTime.add(formattedTime);
+                        debugPrint('Item list: ${itemList}');
                         debugPrint('Item list length: ${itemList.length}');
-                      }
+                      
                     }
 
                     if (packageAdded) {
@@ -146,14 +170,7 @@ class _NotificationSectionState extends State<NotificationSection> {
                           //   // locale: 'en_short',
                           // );
 
-                          int epochTimeInSeconds = int.parse(alertTimestamp);
-                          DateTime dateTime =
-                              DateTime.fromMillisecondsSinceEpoch(
-                                  epochTimeInSeconds * 1000);
-                          String formattedTime = timeago.format(
-                            dateTime,
-                            // locale: 'en_short',
-                          );
+                      
 
                           return Column(
                             children: [
@@ -183,7 +200,7 @@ class _NotificationSectionState extends State<NotificationSection> {
                                                       () => UserNotification());
                                                 },
                                                 child: CustomText(
-                                                  title: ' package arrived',
+                                                  title: itemList[index],
                                                   fontWeight: FontWeight.w600,
                                                   fontSize: 11.sp,
                                                   color: AppColors.black,
@@ -195,7 +212,7 @@ class _NotificationSectionState extends State<NotificationSection> {
                                       ],
                                     ),
                                     CustomText(
-                                      title: formattedTime,
+                                      title: alertTime[index],
                                       fontWeight: FontWeight.w600,
                                       fontSize: 11.sp,
                                       color: AppColors.black,

@@ -71,14 +71,14 @@ class _SplashScreenState extends State<SplashScreen> {
 
           print(
               "going to Homescreen with the user: ${user.displayName} , ${user.email},${user.photoURL}");
-          Get.to(() => HomeScreen());
+          Get.offAll(() => HomeScreen());
         }
       });
     } else {
       print("Going to login screen");
       SchedulerBinding.instance.addPostFrameCallback((_) {
 
-      Get.to(() => SignIn());
+      Get.offAll(() => SignIn());
       });
 
     }

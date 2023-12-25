@@ -29,95 +29,99 @@ class AddPackageGaurd extends StatefulWidget {
 
 class _AddPackageGaurdState extends State<AddPackageGaurd>
     with SingleTickerProviderStateMixin {
+  Map<String, dynamic> userData = {};
+
   late AnimationController _animationController;
 
   bool status = true;
+  String deviceId = '';
   List<Map<String, dynamic>> devices = [];
+  Map<String, dynamic> deviceData = {};
+
   bool isLoading = true; // Set loading to false in case of an error
-  Future<void> fetchDevices() async {
-    final firestore = FirebaseFirestore.instance;
-    final userUidController = Get.find<UserUidController>();
-    // final uid = userUidController.uid.value; // Assuming you are storing the user's UID in this controller
 
-    final uid = 'tnmNVyaT4LNeDWgo8kl2vILkE2m2';
-    try {
-      final devicesCollection = firestore.collection('devices');
-      final querySnapshot = await devicesCollection.get();
+  // Future<void> fetchDevices() async {
+  //   final firestore = FirebaseFirestore.instance;
+  //   final userUidController = Get.find<UserUidController>();
+  //   // final uid = userUidController.uid.value; // Assuming you are storing the user's UID in this controller
 
-      if (querySnapshot.docs.isNotEmpty) {
-        List<Map<String, dynamic>> filteredDevices = [];
+  //   final uid = 'tnmNVyaT4LNeDWgo8kl2vILkE2m2';
+  //   try {
+  //     final devicesCollection = firestore.collection('devices');
+  //     final querySnapshot = await devicesCollection.get();
 
-        for (var document in querySnapshot.docs) {
-          final deviceData = document.data() as Map<String, dynamic>;
+  //     if (querySnapshot.docs.isNotEmpty) {
+  //       List<Map<String, dynamic>> filteredDevices = [];
 
-          // Check if the "userId" matches your UID
-          if (deviceData['userId'] == uid) {
-            filteredDevices.add(deviceData);
-          }
-        }
+  //       for (var document in querySnapshot.docs) {
+  //         deviceData = document.data() as Map<String, dynamic>;
 
-        if (filteredDevices.isNotEmpty) {
-          setState(() {
-            devices.addAll(filteredDevices);
-            isLoading = false; // Set loading to false in case of an error
-            print("DEVICES are ; ${devices}");
-          });
-        } else {
-          print("No devices found in Firestore for UID: $uid");
-          isLoading = false; // Set loading to false in case of an error
-        }
-      } else {
-        print("No devices found in Firestore for UID: $uid");
-        isLoading = false; // Set loading to false in case of an error
-      }
-    } catch (e) {
-      print("Error fetching devices: $e");
-      isLoading = false; // Set loading to false in case of an error
-    }
-  }
+  //         // Check if the "userId" matches your UID
+  //         if (deviceData['userId'] == uid) {
+  //           filteredDevices.add(deviceData);
+  //         }
+  //         else{
+  //           debugPrint("filtered devices not added");
+  //         }
+  //       }
 
+  //       if (filteredDevices.isNotEmpty) {
+  //         setState(() {
+  //           devices.addAll(filteredDevices);
+  //           isLoading = false; // Set loading to false in case of an error
+  //           print("DEVICES are ; ${devices}");
+  //         });
+  //       } else {
+  //         print("No devices found in Firestore for UID: $uid");
+  //         isLoading = false; // Set loading to false in case of an error
+  //       }
+  //     } else {
+  //       print("No devices found in Firestore for UID: $uid");
+  //       isLoading = false; // Set loading to false in case of an error
+  //     }
+  //   } catch (e) {
+  //     print("Error fetching devices: $e");
+  //     isLoading = false; // Set loading to false in case of an error
+  //   }
+  // }
 
+  // Future<void> updateDeviceStatus(String deviceId, bool isArmed) async {
+  //   final firestore = FirebaseFirestore.instance;
+  //   final userUidController = Get.find<UserUidController>();
+  //   // final uid = userUidController.uid.value;
+  //   final uid = 'tnmNVyaT4LNeDWgo8kl2vILkE2m2';
 
+  //   try {
+  //     final devicesCollection = firestore.collection('devices');
+  //     final querySnapshot =
+  //         await devicesCollection.where('deviceId', isEqualTo: deviceId).get();
 
+  //     if (querySnapshot.docs.isNotEmpty) {
+  //       debugPrint('I am here');
 
+  //       final deviceDocument = querySnapshot.docs.first;
+  //       final deviceData = deviceDocument.data() as Map<String, dynamic>;
 
-  Future<void> updateDeviceStatus(String deviceId, bool isArmed) async {
-    final firestore = FirebaseFirestore.instance;
-    final userUidController = Get.find<UserUidController>();
-    // final uid = userUidController.uid.value;
-    final uid = 'tnmNVyaT4LNeDWgo8kl2vILkE2m2';
+  //       // Check if the "userId" matches your UID
+  //       if (deviceData['userId'] == uid) {
+  //         // Update the 'status' field based on 'isArmed' value
+  //         await deviceDocument.reference.update({
+  //           'status': isArmed ? 'armed' : 'disarmed',
+  //         });
 
-    try {
-      final devicesCollection = firestore.collection('devices');
-      final querySnapshot =
-          await devicesCollection.where('deviceId', isEqualTo: deviceId).get();
+  //         // You can add additional logic here if needed
+  //       }
+  //     }
+  //   } catch (e) {
+  //     print("Error updating device status: $e");
+  //   }
+  // }
 
-      if (querySnapshot.docs.isNotEmpty) {
-        debugPrint('I am here');
-
-        final deviceDocument = querySnapshot.docs.first;
-        final deviceData = deviceDocument.data() as Map<String, dynamic>;
-
-        // Check if the "userId" matches your UID
-        if (deviceData['userId'] == uid) {
-          // Update the 'status' field based on 'isArmed' value
-          await deviceDocument.reference.update({
-            'status': isArmed ? 'armed' : 'disarmed',
-          });
-
-          // You can add additional logic here if needed
-        }
-      }
-    } catch (e) {
-      print("Error updating device status: $e");
-    }
-  }
-
-
-  final ref = FirebaseDatabase.instance.ref('packageGuard/userId1/devices/');
+  // final ref = FirebaseDatabase.instance
+  //     .ref('packageGuard/Ag1O02cdXwgF8DEehiuXfkdXHbq1/devices');
 
   // bool isArmed = false;
-  String deviceId = 'SN83C048DF9D4';
+  // String deviceId = 'SN83C048DF9D4';
   String battery = '';
   bool armedstatus = false;
   bool? armedStatusFromSharedPreferences;
@@ -127,8 +131,7 @@ class _AddPackageGaurdState extends State<AddPackageGaurd>
 
   final controller = Get.put(HomeController());
   final ConnectedWifi = Get.find<ConnectedDevicesController>();
-  bool isAlarming = true;
-
+  late bool isAlarming;
   void storeAlarmStatus(bool alarmStatus) {
     isAlarming = alarmStatus;
 
@@ -138,11 +141,12 @@ class _AddPackageGaurdState extends State<AddPackageGaurd>
   void getAlarmStatus() {
     print("function started");
 
-    DatabaseReference alarmRef = FirebaseDatabase.instance
-        .ref('devices/SN83C048DF9D4/alerts/ALARM_SCALERMOVED');
+    DatabaseReference alarmRef = FirebaseDatabase.instance.ref(
+        'packageGuard/Ag1O02cdXwgF8DEehiuXfkdXHbq1/devices/SN83C048DF9D4/alerts/ALARM_SCALEREMOVED');
     alarmRef.onValue.listen((DatabaseEvent event) {
       setState(() {
         final alarmStatus = event.snapshot.value as bool;
+        print("fetched alarm status is : $alarmStatus");
         // final alarmStatus = true;
 
         storeAlarmStatus(alarmStatus);
@@ -155,24 +159,29 @@ class _AddPackageGaurdState extends State<AddPackageGaurd>
   }
 
   void turnOffAlarm() async {
-    DatabaseReference armedRef =
-        FirebaseDatabase.instance.ref("devices/SN83C048DF9D4_status/");
-    await armedRef.update({
+    DatabaseReference alarmRef = FirebaseDatabase.instance
+        .ref()
+        .child('status')
+        .child(deviceId)
+        .child('alerts');
+    await alarmRef.update({
       "alarm": false,
     });
   }
 
-  void turnOnAlarm(String deviceId) async {
-
-    DatabaseReference armedRef =
-        FirebaseDatabase.instance.ref().child('status').child(deviceId).child('alerts');
-    await armedRef.update({
+  void turnOnAlarm(String dId) async {
+    DatabaseReference alarmRef = FirebaseDatabase.instance
+        .ref()
+        .child('status')
+        .child(dId)
+        .child('alerts');
+    await alarmRef.update({
       "alarm": true,
     });
   }
 
   // void updateArmedStatus(bool isArmed, String deviceId) async {
-  //   // var deviceId= 'SN83C048DF9D4'; use variable when getting many devices
+  // var deviceId= 'SN83C048DF9D4'; use variable when getting many devices
 
   //   DatabaseReference armedRef =
   //       FirebaseDatabase.instance.ref("packageGuard/deviceId1/data/alerts/");
@@ -183,10 +192,10 @@ class _AddPackageGaurdState extends State<AddPackageGaurd>
   //     // "alarm": true
   //   });
   // }
-    void updateArmedStatus(bool isArmed, String deviceId) async {
-    String deviceId= 'SN83C048DF9D4'; //use variable when getting many devices
- DatabaseReference armedRef =
-        FirebaseDatabase.instance.ref().child('status').child(deviceId);
+  void updateArmedStatus(bool isArmed, String deviceId) async {
+    String id = 'SN83C048DF9D4'; //use variable when getting many devices
+    DatabaseReference armedRef =
+        FirebaseDatabase.instance.ref().child('status').child(id);
     await armedRef.once();
 
     await armedRef.update({
@@ -200,7 +209,6 @@ class _AddPackageGaurdState extends State<AddPackageGaurd>
     prefs.setBool('armedStatus', status);
   }
 
-  bool? armedStatus;
   // void fetchArmedStatus() async {
   //   // var deviceId= 'SN83C048DF9D4'; use variable when getting many devices
 
@@ -222,21 +230,22 @@ class _AddPackageGaurdState extends State<AddPackageGaurd>
   //   // DataSnapshot snapshot = (await ref.once()) as DataSnapshot;
   // }
 
-    void fetchArmedStatus() async {
+  void fetchArmedStatus() async {
     // var deviceId= 'SN83C048DF9D4'; use variable when getting many devices
-String deviceId='SN83C048DF9D4';
+    // String deviceId = 'SN83C048DF9D4';
     // DatabaseReference ref =
     //     FirebaseDatabase.instance.ref("status/$deviceId/data/alerts/");
     DatabaseReference ref =
         FirebaseDatabase.instance.ref().child('status').child(deviceId);
     DatabaseEvent event = await ref.once();
     dynamic data = event.snapshot.value;
-    armedStatus = data['armed'] as bool?;
+    armedstatus = data['armed'];
 
-    armedstatus = armedStatus!;
+    // armedstatus = armedStatus!;
     print('the armed status value now is${armedstatus}');
     setState(() {
-      switchValue = armedstatus ?? false;
+      switchValue = armedstatus;
+      isArmed = armedstatus;
     });
     _saveArmedStatusToSharedPreferences();
     // print('the armed status is ${armedstatus}');
@@ -247,15 +256,16 @@ String deviceId='SN83C048DF9D4';
 
   void _saveArmedStatusToSharedPreferences() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setBool('armedStatus', armedStatus ?? false);
-    print('Saved armed status to SharedPreferences: $armedStatus');
+    prefs.setBool('armedStatus', armedstatus ?? false);
+    print('Saved armed status to SharedPreferences: $armedstatus');
   }
 
   void _loadArmedStatusFromSharedPreferences() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      armedStatusFromSharedPreferences = prefs.getBool('armedStatus') ?? false;
+      armedStatusFromSharedPreferences = prefs.getBool('armedStatus');
       switchValue = armedStatusFromSharedPreferences ?? false;
+      switchValue = armedstatus ?? false;
     });
     print(
         'Loaded armed status from SharedPreferences: $armedStatusFromSharedPreferences');
@@ -268,14 +278,17 @@ String deviceId='SN83C048DF9D4';
     getAlarmStatus();
     fetchArmedStatus();
     _loadArmedStatusFromSharedPreferences();
-    // Timer.periodic(Duration(seconds: 1), (timer) {
+    final userController = Get.find<UserController>();
+
+    Timer.periodic(Duration(seconds: 1), (timer) {
       fetchArmedStatus();
-    // });
+    });
     _animationController = AnimationController(
       vsync: this,
       duration: Duration(seconds: 5), // Adjust the duration as needed
     )..repeat();
-    fetchDevices();
+    // fetchDevices();
+
     // print("the connected wifi is ${ConnectedWifi[$ConnectedWifi]}");
 
     // Uncomment the next line if you want to start the animation immediately
@@ -314,82 +327,62 @@ String deviceId='SN83C048DF9D4';
 
   @override
   Widget build(BuildContext context) {
+    var user = FirebaseAuth.instance.currentUser;
+    final ref = FirebaseDatabase.instance
+        .ref()
+        .child('packageGuard')
+        .child(user!.uid.toString())
+        .child('devices');
+    print("now");
     return Container(
       height: 360.h,
       width: MediaQuery.of(context).size.width,
       child: StreamBuilder(
           stream: ref.onValue,
           builder: (context, AsyncSnapshot<DatabaseEvent> snapshot) {
-            if (!snapshot.hasData) {
-              return Container();
+            if (!snapshot.hasData && snapshot.data == null) {
+              return Container(
+                child: Text('No devices'),
+              );
             } else {
-              Map<dynamic, dynamic> map =
-                  snapshot.data!.snapshot.value as dynamic;
+              final event = snapshot.data!;
+              final dataSnapshot = event.snapshot;
 
-                  print("Map : $map");
+              print("dataSnapshot is the: $dataSnapshot");
+              if (dataSnapshot.value == null) {
+                  return Center(
+                    child: Container(
+                                  child: Text('No devices',style: TextStyle(fontFamily: 'Montserrat',fontWeight: FontWeight.w500,fontSize: 15),),
+                                ),
+                  );
+              }
+              Map<dynamic, dynamic> map = dataSnapshot.value as dynamic;
+
+              print("Map : $map!");
+
+              deviceId = map.keys.first;
+
+              print("deviceId : $deviceId");
+
               List list = map.keys.toList();
-                                print("list of map keys : $list");
+              print("list of map keys : $list");
 
               // print('the value of the $list is');
 
-              Map deviceData = map["deviceId1"];
-              print("Battery of device is ${deviceData['battery']}");
-              print("deviceIds : $deviceData");
+              Map deviceData = map[deviceId];
+              print("deviceData : $deviceData");
 
-              print("deviceIds1: ${map["deviceId1"]}");
-              print("deviceIds2: ${map["deviceId2"]}");
+              Map alertsData = deviceData['alerts'];
+              print("alertsData : $alertsData");
 
-
-              Map alertsData = deviceData['alerts'];  
-              print("deviceData : $deviceData['alerts]");   
-
-              print('here the battery is ${alertsData['ALERT_BATTERY']}');
-
-              // Map data =
-              //     deviceIds['alerts'] is Map ? deviceIds['alerts'] : {};
-
-              print('the value of the map is $alertsData');
-
-              // FirebaseFirestore.instance
-              //     .collection("users")
-              //     .doc(FirebaseAuth.instance.currentUser!.uid)
-              //     .update({"devices": deviceIds});
-
-              // List<bool> armedStatusList =
-              //     List.generate(deviceIds.length, (index) => false);
-
-              // battery =
-              //     map['SN83C048DF9D4']['battery_level'] ?? 'battery level';
+              Map wifiData = deviceData['wifi'];
+              print("wifiData : $wifiData");
 
               return ListView.builder(
                 physics: const BouncingScrollPhysics(),
-                // itemCount: devices.length, // Use the length of the devices list
-                itemCount: 1,
-                // Use the length of the devices list
+                itemCount: list.length,
                 itemBuilder: (context, index) {
-                  // Map<dynamic, dynamic> packageGuardInfo =
-                  //     list[index]['SN83C048DF9D4'] ?? {};
-
                   Key itemKey = UniqueKey();
-                  // Map<dynamic, dynamic> packageGuardInfo = map[deviceIds] ?? {};
-                  // Map<dynamic, dynamic> packageGuardInfo = map[data] ?? {};
-
-                  // print("package Guard info: $packageGuardInfo");
-
-                  // print("alarm status: ${data['alarm']}");
-
-                  // bool armedStatus = data['armedStatus'] ?? false;
-                  // print("Armed status: ${armedStatus}");
-                  // String battery = deviceData['battery'] ?? 'battery level';
-                  // print("battery: ${battery}");
-
-                  // bool armedStatus = packageGuardInfo['armed_status'] ?? false;
-                  // var device_id = packageGuardInfo[
-                  //'device_id'] ?? 'dd';
-                  // final deviceData = 1; // Access the device data
-
-                  // ids.add(deviceIds[index]);
-                  // print("the device ids are given ad $ids");
 
                   return Container(
                     key: itemKey,
@@ -428,22 +421,19 @@ String deviceId='SN83C048DF9D4';
                             animation: _animationController,
                             builder: (context, child) {
                               // Determine the text and color based on conditions
-                              final textIndex = _animationController.value < 0.5
-                                  ? 'Alarm'
-                                  : (_animationController.value < 0.75
-                                      ? 'Low battery'
-                                      : 'Armed');
+                              final textIndex = isArmed ? 'Armed' : 'DisArmed';
 
                               final textColor = isAlarming
                                   ? Colors.red // Color for Alarm
-                                  : (double.parse(deviceData['battery']) <= 20
+                                  : (double.parse(
+                                              deviceData['battery_level']) <=
+                                          20.00
                                       ? Colors.yellow // Color for Low Battery
                                       : isArmed
                                           ? const Color(
                                               0xff348D15) // Color for Armed
                                           : Colors
                                               .red); // Default color for Disarmed
-
                               return Text(
                                 textIndex,
                                 style: TextStyle(
@@ -479,33 +469,34 @@ String deviceId='SN83C048DF9D4';
                                   ? 0
                                   : (_animationController.value < 0.75 ? 1 : 2);
 
-                              return isAlarming &&
-                                      double.parse(deviceData['battery']) <=
-                                          20 &&
-                                      armedstatus
+                              return (isAlarming &&
+                                      (double.parse(
+                                              deviceData['battery_level']) <=
+                                          20) &&
+                                      armedstatus)
                                   ? Image.asset(
                                       _trailImages[imageIndex],
                                       height: 41,
                                       width: 41,
                                     )
-                                  : Text('Ready to Arm');
-                              // : GestureDetector(
-                              //     onTap: () {
-                              //       setState(() {
-                              //         turnOffAlarm();
-                              //       });
-                              //     },
-                              //     child: Container(
-                              //       // ignore: prefer_const_constructors
-                              //       child: Column(children: [
-                              //         Image.asset(
-                              //           _trailImages[2],
-                              //           height: 41,
-                              //           width: 41,
-                              //         )
-                              //       ]),
-                              //     ),
-                              //   );
+                                  // : Text('Ready to Arm');
+                                  : GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          turnOffAlarm();
+                                        });
+                                      },
+                                      child: Container(
+                                        // ignore: prefer_const_constructors
+                                        child: Column(children: [
+                                          Image.asset(
+                                            _trailImages[0],
+                                            height: 41,
+                                            width: 41,
+                                          )
+                                        ]),
+                                      ),
+                                    );
                             },
                           ),
                         ),
@@ -578,8 +569,7 @@ String deviceId='SN83C048DF9D4';
                                     imgHeight: 20,
                                     imgWidth: 20,
                                     toptext: 'Connected to',
-                                    btnText: ConnectedWifi.connectedDevices.keys
-                                        .toString(),
+                                    btnText: wifiData['SSID']!,
                                     tFontWeight: FontWeight.w400,
                                     bFontWeight: FontWeight.w700,
                                   ),
@@ -589,11 +579,12 @@ String deviceId='SN83C048DF9D4';
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   InnerContainerData(
-                                    img: double.parse(deviceData['battery']) >=
+                                    img: double.parse(
+                                                deviceData['battery_level']) >=
                                             80
                                         ? AppImages.batteryFull
-                                        : (double.parse(
-                                                    deviceData['battery']) <=
+                                        : (double.parse(deviceData[
+                                                    'battery_level']) <=
                                                 20
                                             ? AppImages.batteryloww
                                             : AppImages.batteryLow),
@@ -601,7 +592,7 @@ String deviceId='SN83C048DF9D4';
                                     imgWidth: 30,
                                     toptext: 'Battery',
                                     btnText: deviceData[
-                                        'battery'], // Replace with actual battery data
+                                        'battery_level'], // Replace with actual battery data
                                     tFontWeight: FontWeight.w400,
                                     bFontWeight: FontWeight.w700,
                                   ),
@@ -655,9 +646,12 @@ String deviceId='SN83C048DF9D4';
                                   // controller.enableIsArmed(index);
                                   armedstatus = value;
                                   deviceData['armed'] = value;
-                                  _saveState(armedstatus);
+                                  isArmed = armedstatus;
+
+                                  _saveState(isArmed);
                                 });
-                                updateArmedStatus(armedstatus, deviceId);
+                                updateArmedStatus(
+                                    armedstatus, deviceId!.toString());
 
                                 armedstatus != armedstatus;
                                 print('the value of the $isArmed hello');

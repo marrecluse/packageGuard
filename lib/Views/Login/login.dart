@@ -243,7 +243,7 @@ if (uEmail != null) {
         print("UID is null, unable to fetch user data from Firestore");
       }
 
-      Get.to(() => const HomeScreen());
+      Get.offAll(() => const HomeScreen());
 
       // You might want to show a success snackbar here.
       AppConstants.showCustomSnackBar("Welcome Back!");
@@ -296,7 +296,7 @@ if (uEmail != null) {
           userUidController.setUID(uid); // Call setUID on UserUidController
           // Save user data to the controller
           userController.setUserData(userData!);
-          Get.to(() => const HomeScreen());
+          Get.offAll(() => const HomeScreen());
           print("after HomeScreen");
           // You might want to show a success snackbar here.
           AppConstants.showCustomSnackBar("Welcome Back!");
