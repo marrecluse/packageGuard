@@ -319,12 +319,15 @@ class _EditSafeCircleState extends State<EditSafeCircle> {
                                                       radius: 27.r,
                                                       child: ClipOval(
                                                         child: Image.network(
-                                                          user.userImage
-                                                              .toString(), // Use the network URL directly
-                                                          height: 50.h,
-                                                          width: 50.h,
-                                                          fit: BoxFit.cover,
-                                                        ),
+                                        user.userImage,
+                                        errorBuilder: (context, error,
+                                                stackTrace) =>
+                                            Icon(Icons
+                                                .person_2_outlined), // Use the network URL directly
+                                        height: 50.h,
+                                        width: 50.h,
+                                        fit: BoxFit.cover,
+                                      ),
                                                       ),
                                                     ),
 

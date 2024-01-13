@@ -27,26 +27,30 @@ final userController = Get.find<UserController>();
 Map<String, dynamic> userData = {};
 
 class _SafeCircleNotificationState extends State<SafeCircleNotification> {
+
   @override
   void initState() {
     super.initState();
+            final userController = Get.find<UserController>();
 
+    // Access user data in initState or another method
     userData = userController.userData as Map<String, dynamic>;
+
     print(userData);
     print(userData['ProfileImage']);
   }
 final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
-  final profileImage = userData['ProfileImage'].toString().trim();
     Future<void> _refreshData() async {
 
     setState(() {
-      userData = userController.userData as Map<String, dynamic>;
       initState();
     });
   }
 
   @override
   Widget build(BuildContext context) {
+        final profileImage = userData['ProfileImage'].toString().trim();
+
     return SafeArea(
       child: Scaffold(
         drawer: MyDrawer(),

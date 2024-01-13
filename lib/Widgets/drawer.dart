@@ -72,7 +72,18 @@ class _MyDrawerState extends State<MyDrawer> {
               currentAccountPictureSize: Size.square(50),
               currentAccountPicture: CircleAvatar(
                 radius: 30.r,
-                backgroundImage: NetworkImage(profileImage),
+                child: ClipOval(
+                  child: Image.network(
+                                          profileImage,
+                                          errorBuilder: (context, error,
+                                                  stackTrace) =>
+                                              Icon(Icons
+                                                  .person_2_outlined), // Use the network URL directly
+                                          height: 50.h,
+                                          width: 50.h,
+                                          fit: BoxFit.cover,
+                                        ),
+                ),
               ),
             ),
           ),

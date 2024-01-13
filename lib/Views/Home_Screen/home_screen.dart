@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -47,9 +48,9 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _refreshData() async {
     setState(() {
       userData = userController.userData as Map<String, dynamic>;
-      initState();
     });
   }
+
 
 
   void getAlarmStatus() {
@@ -87,13 +88,39 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  Future<List<DocumentSnapshot<Map<String, dynamic>>>> fetchAlertsLog() async {
+  print('hittttttttt');
+  try {
+    // Reference to your Firestore collection
+    CollectionReference<Map<String, dynamic>> alertsCollection =
+        FirebaseFirestore.instance.collection('alerts');
+
+    // Query to get documents from the specified collection
+    QuerySnapshot<Map<String, dynamic>> querySnapshot =
+        await alertsCollection
+            .doc('Ag1O02cdXwgF8DEehiuXfkdXHbq1') // Specific document ID
+            .collection('alertsLog') // Subcollection
+            .get();
+
+    // Extract documents from the query snapshot
+    List<DocumentSnapshot<Map<String, dynamic>>> documents =
+        querySnapshot.docs;
+  print('documents  $documents');
+    return documents;
+  } catch (e) {
+    // Handle errors here
+    print('Error fetching data: $e');
+    return [];
+  }
+}
+
+
   @override
   void initState() {
     super.initState();
     getAlarmStatus();
             final userController = Get.find<UserController>();
-
-
+fetchAlertsLog();
 
     // Access user data in initState or another method
     userData = userController.userData as Map<String, dynamic>;
@@ -133,7 +160,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   padding: EdgeInsets.symmetric(horizontal: 20.w),
                   child: Column(
                     children: [
-                
+                                      
                       //Notification container
                       NotificationSection(),
                 
@@ -184,14 +211,11 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             )
                           : SizedBox(),
-                      GestureDetector(
-                          onTap: () {
-                            Get.to(DeviceDetails());
-                          },
-                          child: AddPackageGaurd()),
+                      AddPackageGaurd(),
                     ],
                   ),
                 ),
+
               ],
             ),
           ),

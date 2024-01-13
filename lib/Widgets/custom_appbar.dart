@@ -21,8 +21,8 @@ class CustomAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-   List<String>  titleName=title.split(' ');
-   
+    List<String> titleName = title.split(' ');
+
     return Stack(
       children: [
         SizedBox(
@@ -57,18 +57,27 @@ class CustomAppBar extends StatelessWidget {
                             child: CircleAvatar(
                               radius: 25.r,
                               child: ClipOval(
-                                child: userData['method']=='emailAndPass' ? 
-                                Image.network(
-                                  image
-                                      .toString(), // Use the network URL directly
-                                  height: 50.h,
-                                  width: 50.h,
-                                  fit: BoxFit.cover,
-                                ) : Image(image: NetworkImage(image),
-                                height: 50.h,
-                                width: 50.h,
-                                fit: BoxFit.cover,
-                                ),
+                                child: userData['method'] == 'emailAndPass'
+                                    ? Image.network(
+                                        image.toString(),
+                                        errorBuilder: (context, error,
+                                                stackTrace) =>
+                                            Icon(Icons
+                                                .person_2_outlined), // Use the network URL directly
+                                        height: 50.h,
+                                        width: 50.h,
+                                        fit: BoxFit.cover,
+                                      )
+                                    : Image.network(
+                                        image,
+                                        errorBuilder: (context, error,
+                                                stackTrace) =>
+                                            Icon(Icons
+                                                .person_2_outlined), // Use the network URL directly
+                                        height: 50.h,
+                                        width: 50.h,
+                                        fit: BoxFit.cover,
+                                      ),
                               ),
                             ),
                           ),
