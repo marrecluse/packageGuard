@@ -1,6 +1,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.example.packageguard">
 <!-- Provide required visibility configuration for API level 30 and above -->
+ <queries>
+        <provider android:authorities="com.facebook.katana.provider.PlatformProvider" />
+    </queries>
 <queries>
+
   <!-- If your app checks for SMS support -->
   <intent>
     <action android:name="android.intent.action.VIEW" />
@@ -35,6 +39,10 @@
         android:label="packageguard"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+
+        
+<meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
+<meta-data android:name="com.facebook.sdk.ClientToken" android:value="@string/facebook_client_token"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -78,8 +86,6 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
-
-
 
     </application>
 </manifest>

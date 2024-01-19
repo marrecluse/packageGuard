@@ -56,19 +56,22 @@ class _MyDrawerState extends State<MyDrawer> {
         padding: EdgeInsets.zero,
         children: <Widget>[
           DrawerHeader(
-            decoration: BoxDecoration(color: AppColors.navyblue),
+            padding: EdgeInsets.all(0),
+            decoration: BoxDecoration(color: AppColors.navyblue,),
             child: UserAccountsDrawerHeader(
               decoration: BoxDecoration(color: AppColors.navyblue),
+              margin: EdgeInsets.only(top: 3),
               accountName: CustomText(
-                title: '${userData['Name'] ?? "Email"}',
+                title: '${userData['Name'] ?? "User"}',
                 fontSize: 16.sp,
                 fontWeight: FontWeight.w600,
               ),
               accountEmail: CustomText(
-                title: '${userData['Email'] ?? "User"}',
+                title: '${userData['Email'] ?? "UserEmail"}',
                 fontSize: 14.sp,
                 fontWeight: FontWeight.w500,
               ),
+
               currentAccountPictureSize: Size.square(50),
               currentAccountPicture: CircleAvatar(
                 radius: 30.r,

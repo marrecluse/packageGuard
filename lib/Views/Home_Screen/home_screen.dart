@@ -162,12 +162,8 @@ fetchAlertsLog();
                     children: [
                                       
                       //Notification container
-                      NotificationSection(),
-                
-                
-                
-                      SizedBox(height: 12.h),
-                      
+                      NotificationSection(),                                               
+                      SizedBox(height: 12.h),                      
                       GestureDetector(
                         onTap: () {
                           Get.to(() => ScanScreen());

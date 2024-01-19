@@ -138,7 +138,7 @@ class _ContainerComponentState extends State<ContainerComponent> {
                 child: Row(
                   children: [
                     Image(
-                        image: AssetImage(AppImages.facbook),
+                        image: AssetImage(AppImages.facebook),
                         height: 18.h,
                         width: 18.w),
                     CustomSizeBox(width: 20.w),

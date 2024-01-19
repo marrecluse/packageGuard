@@ -74,14 +74,17 @@ class _AddPackageGaurdState extends State<AddPackageGaurd>
   Stream<Map<String, int>> fetchCounts(String device) {
     try {
       // Reference to your Firestore collection
-      User? user= FirebaseAuth.instance.currentUser;
+      User? user = FirebaseAuth.instance.currentUser;
       CollectionReference<Map<String, dynamic>> alertsCollection =
-          FirebaseFirestore.instance.collection('alerts').doc(user!.uid).collection('alertsLog');
+          FirebaseFirestore.instance
+              .collection('alerts')
+              .doc(user!.uid)
+              .collection('alertsLog');
 
       // Create two variables to store counts
       int totalPackages = 0;
       int removedPackages = 0;
-print("hi: ${alertsCollection.doc()}");
+      print("hi: ${alertsCollection.doc()}");
       // Query to get documents where alertType is equal to 'AlertScaleAdded' or 'AlertScaleRemoved'
       return alertsCollection
 // Subcollection
@@ -100,8 +103,8 @@ print("hi: ${alertsCollection.doc()}");
             removedPackages++;
           }
         });
-print("total_packages: $totalPackages");
-print("removed_packages: $removedPackages");
+        print("total_packages: $totalPackages");
+        print("removed_packages: $removedPackages");
         // Return a map containing the counts
         return {
           'total_packages': totalPackages,
@@ -301,7 +304,7 @@ print("removed_packages: $removedPackages");
                         if (snapshot.hasError) {
                           return Text('Error: ${snapshot.error}');
                         } else if (!snapshot.hasData || snapshot.data == null) {
-                          return Text('No data available');
+                          return Text('No data available',style: TextStyle(fontSize: context.screenWidth*0.06),);
                         } else {
                           Map<dynamic, dynamic> mapAlerts =
                               snapshot.data!.snapshot.value as dynamic;
@@ -330,254 +333,293 @@ print("removed_packages: $removedPackages");
                           bool alarmValue = mapAlarm['ALARM_SCALEREMOVED'];
 
                           return StreamBuilder(
-                stream: FirebaseFirestore.instance.collection('devices').doc(deviceId).snapshots(),
-                            builder: (context, snapshot) {
-  if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        } else if (!snapshot.hasData || snapshot.data == null) {
-          return Text('No data available');
-        } else {
-          Map<String, dynamic> deviceStatus = snapshot.data!.data() as Map<String, dynamic>;
-          print("device status: ${deviceStatus['status']}");
-          bool? receivedArmedValue = deviceData['armed'] as bool?;
+                              stream: FirebaseFirestore.instance
+                                  .collection('devices')
+                                  .doc(deviceId)
+                                  .snapshots(),
+                              builder: (context, snapshot) {
+                                if (snapshot.hasError) {
+                                  return Text('Error: ${snapshot.error}');
+                                } else if (!snapshot.hasData ||
+                                    snapshot.data == null) {
+                                  return Text('No data available');
+                                }  else {
+                                  Map<String, dynamic> deviceStatus =
+                                      snapshot.data!.data()
+                                          as Map<String, dynamic>;
+                                  print(
+                                      "device status: ${deviceStatus['status']}");
+                                  bool? receivedArmedValue =
+                                      deviceData['armed'] as bool?;
 
-
-
-                              return GestureDetector(
-                                onTap: () {
-                                  Get.to(DeviceDetails(
-                                    alarmValue: alarmValue,
-                                    armedStatusMap: isSwitched,
-                                    battery: map[deviceId]["battery_level"],
-                                    wifi: map[deviceId]["wifi"]["SSID"],
-                                    device: deviceId,
-                                    alarming: alarmValue,
-                                  ));
-                                },
-                                child: Container(
-                                  key: Key(
-                                      deviceId), // Use device_id as a unique key
-                                  // Use device ID as a unique key
-                                  margin: EdgeInsets.only(top: 5.h),
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 10.w, vertical: 1.h),
-                                  // height: 186.h,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(8.r),
-                                    color: Colors.blueGrey.shade100,
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      ListTile(
-                                        contentPadding: EdgeInsets.zero,
-                                        horizontalTitleGap: 10.w,
-                                        leading: Image.asset(
-                                          AppImages.packageLogo,
-                                          height: 48,
-                                          width: 68,
-                                        ),
-                                        title: AnimatedBuilder(
-                                          animation: _animationController,
-                                          builder: (context, child) {
-                                            // Determine the text and color based on conditions
-                                            final textIndex =
-                                             isSwitched
-                                                ? 'Armed'
-                                                : 'DisArmed';
-                          
-                                            final textColor = isSwitched
-                                                ? Colors.green
-                                                : Colors.red;
-                                            // Default color for Disarmed
-                                            return Text(
-                                              deviceStatus['status']=='offline' ? 'Offline' : textIndex,
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 13,
-                                                color: textColor,
-                                              ),
-                                            );
-                                          },
-                                        ),
-                                        subtitle: CustomText(
-                                          title: deviceId,
-                                          //  deviceIds[0]
-                                          // Access device SSID
-                                          color: const Color(0xff4E4E4E),
-                                          fontSize: 9,
-                                          fontWeight: FontWeight.w400,
-                                        ),
-                                        trailing: GestureDetector(
-                                          onTap: () async {
-                                            if (alarmValue) {
-                                              turnOffAlarm(deviceId);
-                                            }
-                                          },
-                                          child: Image.asset(
-                                            _trailImages[alarmValue
-                                                ? 2
-                                                : double.parse(map[deviceId]
-                                                            ["battery_level"]) <=
-                                                        20
-                                                    ? 1
-                                                    : 0],
-                                            height: 41,
-                                            width: 41,
-                                          ),
-                                        ),
+                                  return GestureDetector(
+                                    onTap: () {
+                                      Get.to(DeviceDetails(
+                                        alarmValue: alarmValue,
+                                        armedStatusMap: isSwitched,
+                                        battery: map[deviceId]["battery_level"],
+                                        wifi: map[deviceId]["wifi"]["SSID"],
+                                        device: deviceId,
+                                        alarming: alarmValue,
+                                      ));
+                                    },
+                                    child: Container(
+                                      key: Key(
+                                          deviceId), // Use device_id as a unique key
+                                      // Use device ID as a unique key
+                                      margin: EdgeInsets.only(top: 5.h),
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 10.w, vertical: 1.h),
+                                      // height: 186.h,
+                                      decoration: BoxDecoration(
+                                        borderRadius:
+                                            BorderRadius.circular(8.r),
+                                        color: Colors.blueGrey.shade100,
                                       ),
-                          
-                                      Container(
-                                        height: 60,
-                                        width: MediaQuery.of(context).size.width,
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 10.w, vertical: 9.h),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.circular(5.r),
-                                        ),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                InnerContainerData(
-                                                  img: AppImages.wifiImg,
-                                                  imgHeight: 20,
-                                                  imgWidth: 20,
-                                                  toptext: 'Connected to',
-                                                  btnText: map[deviceId]["wifi"]
-                                                      ["SSID"],
-                                                  tFontWeight: FontWeight.w400,
-                                                  bFontWeight: FontWeight.w700,
-                                                ),
-                                              ],
-                                            ),
-                                            Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                InnerContainerData(
-                                                  img: double.parse(map[deviceId]
-                                                              ["battery_level"]) >=
-                                                          80
-                                                      ? AppImages.batteryFull
-                                                      : (double.parse(map[deviceId][
-                                                                  "battery_level"]) <=
-                                                              20
-                                                          ? AppImages.batteryloww
-                                                          : AppImages.batteryLow),
-                                                  imgHeight: 20,
-                                                  imgWidth: 30,
-                                                  toptext: 'Battery',
-                                                  btnText: map[deviceId][
-                                                      "battery_level"], // Replace with actual battery data
-                                                  tFontWeight: FontWeight.w400,
-                                                  bFontWeight: FontWeight.w700,
-                                                ),
-                                              ],
-                                            ),
-                                            StreamBuilder<Map<String, int>>(
-                                                stream: fetchCounts(deviceId),
-                                                builder: (context, snapshot) {
-                                                  if (snapshot.hasError) {
-                                                    return Center(
-                                                      child: Text(
-                                                          'Error: ${snapshot.error}'),
-                                                    );
-                                                  }
-                          
-                                                  if (!snapshot.hasData ||
-                                                      snapshot.data == null) {
-                                                    return Center(
-                                                      child:
-                                                          CircularProgressIndicator(),
-                                                    );
-                                                  }
-                          
-                                                  final data = snapshot.data!;
-                                                  print("count data: $data");
-                          
-                                                  int totalPackages =
-                                                      data['total_packages'] as int;
-                                                  print(
-                                                      "total packages: $totalPackages");
-                                                  int removedPackages =
-                                                      data['removed_packages']
-                                                          as int;
-                                                  int sum = totalPackages -
-                                                      removedPackages;
-                                                  return Column(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.center,
-                                                    children: [
-                                                      InnerContainerData(
-                                                        img: AppImages.diamondImg,
-                                                        imgHeight: 22,
-                                                        imgWidth: 22,
-                                                        toptext: '$sum Packages',
-                                                        btnText:
-                                                            "Waiting", // Replace with actual package data
-                                                        tFontWeight:
-                                                            FontWeight.w700,
-                                                        bFontWeight:
-                                                            FontWeight.w400,
-                                                      ),
-                                                    ],
-                                                  );
-                                                }),
-                                          ],
-                                        ),
-                                      ),
-                                      SizedBox(height: 10.h),
-                                      // const CustomSwitch(),
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.end,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
-                                          CustomText(
-                                            title: isSwitched ?? false
-                                                ? 'Armed'
-                                                : 'DisArmed', // Access device status
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 12,
-                                            color: isSwitched
-                                                ? const Color(0xff348D15)
-                                                : Colors.red,
+                                          ListTile(
+                                            contentPadding: EdgeInsets.zero,
+                                            horizontalTitleGap: 10.w,
+                                            leading: Image.asset(
+                                              AppImages.packageLogo,
+                                              height: 48,
+                                              width: 68,
+                                            ),
+                                            title: AnimatedBuilder(
+                                              animation: _animationController,
+                                              builder: (context, child) {
+                                                // Determine the text and color based on conditions
+                                                final textIndex = isSwitched
+                                                    ? 'Armed'
+                                                    : 'DisArmed';
+
+                                                final textColor = isSwitched
+                                                    ? Colors.green
+                                                    : Colors.red;
+                                                // Default color for Disarmed
+                                                return Text(
+                                                  // deviceStatus['status']=='offline' ? 'Offline' : textIndex,
+                                                  isSwitched
+                                                      ? 'Armed'
+                                                      : 'DisArmed',
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.w600,
+                                                    fontSize: 13,
+                                                    color: textColor,
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                            subtitle: CustomText(
+                                              title: deviceId,
+                                              //  deviceIds[0]
+                                              // Access device SSID
+                                              color: const Color(0xff4E4E4E),
+                                              fontSize: 9,
+                                              fontWeight: FontWeight.w400,
+                                            ),
+                                            trailing: GestureDetector(
+                                              onTap: () async {
+                                                if (alarmValue) {
+                                                  turnOffAlarm(deviceId);
+                                                }
+                                              },
+                                              child: Image.asset(
+                                                _trailImages[alarmValue
+                                                    ? 2
+                                                    : double.parse(map[deviceId]
+                                                                [
+                                                                "battery_level"]) <=
+                                                            20
+                                                        ? 1
+                                                        : 0],
+                                                height: 41,
+                                                width: 41,
+                                              ),
+                                            ),
                                           ),
-                                          SizedBox(width: 5.w),
-                                          FlutterSwitch(
-                                              padding: 0,
-                                              activeColor: const Color(0xff3FCE33),
-                                              inactiveColor: Colors.red,
-                                              // value: armedstatus,s
-                                              width: 40,
-                                              height: 20,
-                                              toggleSize: 20,
-                                              value: isSwitched,
-                                              // Use armed status from the map
-                                              onToggle: (val) async {
-                                                setState(() {
-                                                  isSwitched = val;
-                                                });
-                                                // Update the armed status in the real-time database
-                                                updateArmedStatus(val, deviceId);
-                          
-                                                // Here, you can also store the updated value in shared preferences
-                                                saveStatusToDeviceId(val, deviceId);
-                                              }),
+
+                                          Container(
+                                            height: 60,
+                                            width: MediaQuery.of(context)
+                                                .size
+                                                .width,
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 10.w,
+                                                vertical: 9.h),
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(5.r),
+                                            ),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    InnerContainerData(
+                                                      img: AppImages.wifiImg,
+                                                      imgHeight: 20,
+                                                      imgWidth: 20,
+                                                      toptext: 'Connected to',
+                                                      btnText: map[deviceId]
+                                                          ["wifi"]["SSID"],
+                                                      tFontWeight:
+                                                          FontWeight.w400,
+                                                      bFontWeight:
+                                                          FontWeight.w700,
+                                                    ),
+                                                  ],
+                                                ),
+                                                Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    InnerContainerData(
+                                                      img: double.parse(map[
+                                                                      deviceId][
+                                                                  "battery_level"]) >=
+                                                              80
+                                                          ? AppImages
+                                                              .batteryFull
+                                                          : (double.parse(map[
+                                                                          deviceId]
+                                                                      [
+                                                                      "battery_level"]) <=
+                                                                  20
+                                                              ? AppImages
+                                                                  .batteryloww
+                                                              : AppImages
+                                                                  .batteryLow),
+                                                      imgHeight: 20,
+                                                      imgWidth: 30,
+                                                      toptext: 'Battery',
+                                                      btnText: map[deviceId][
+                                                          "battery_level"], // Replace with actual battery data
+                                                      tFontWeight:
+                                                          FontWeight.w400,
+                                                      bFontWeight:
+                                                          FontWeight.w700,
+                                                    ),
+                                                  ],
+                                                ),
+                                                StreamBuilder<Map<String, int>>(
+                                                    stream:
+                                                        fetchCounts(deviceId),
+                                                    builder:
+                                                        (context, snapshot) {
+                                                      if (snapshot.hasError) {
+                                                        return Center(
+                                                          child: Text(
+                                                              'Error: ${snapshot.error}'),
+                                                        );
+                                                      }
+
+                                                      if (!snapshot.hasData ||
+                                                          snapshot.data ==
+                                                              null) {
+                                                        return Center(
+                                                          child:
+                                                              CircularProgressIndicator(),
+                                                        );
+                                                      }
+
+                                                      final data =
+                                                          snapshot.data!;
+                                                      print(
+                                                          "count data: $data");
+
+                                                      int totalPackages =
+                                                          data['total_packages']
+                                                              as int;
+                                                      print(
+                                                          "total packages: $totalPackages");
+                                                      int removedPackages =
+                                                          data['removed_packages']
+                                                              as int;
+                                                      int sum = totalPackages -
+                                                          removedPackages;
+                                                      return Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          InnerContainerData(
+                                                            img: AppImages
+                                                                .diamondImg,
+                                                            imgHeight: 20,
+                                                            imgWidth: 20,
+                                                            toptext:
+                                                                '$sum Packages',
+                                                            btnText:
+                                                                "Waiting", // Replace with actual package data
+                                                            tFontWeight:
+                                                                FontWeight.w700,
+                                                            bFontWeight:
+                                                                FontWeight.w400,
+                                                          ),
+                                                        ],
+                                                      );
+                                                    }),
+                                              ],
+                                            ),
+                                          ),
+                                          SizedBox(height: 10.h),
+                                          // const CustomSwitch(),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            children: [
+                                              CustomText(
+                                                title: isSwitched ?? false
+                                                    ? 'Armed'
+                                                    : 'DisArmed', // Access device status
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 12,
+                                                color: isSwitched
+                                                    ? const Color(0xff348D15)
+                                                    : Colors.red,
+                                              ),
+                                              SizedBox(width: 5.w),
+                                              FlutterSwitch(
+                                                  padding: 0,
+                                                  activeColor:
+                                                      const Color(0xff3FCE33),
+                                                  inactiveColor: Colors.red,
+                                                  // value: armedstatus,s
+                                                  width: 40,
+                                                  height: 20,
+                                                  toggleSize: 20,
+                                                  value: isSwitched ?? false,
+                                                  // Use armed status from the map
+                                                  onToggle: (val) async {
+                                                    setState(() {
+                                                      isSwitched = val;
+                                                    });
+                                                    // Update the armed status in the real-time database
+                                                    updateArmedStatus(
+                                                        val, deviceId);
+
+                                                    // Here, you can also store the updated value in shared preferences
+                                                    saveStatusToDeviceId(
+                                                        val, deviceId);
+                                                  }),
+                                            ],
+                                          ),
+                                          SizedBox(height: 10.h),
                                         ],
                                       ),
-                                      SizedBox(height: 10.h),
-                                    ],
-                                  ),
-                                ),
-                              );
-        }}
-                          );
+                                    ),
+                                  );
+                                }
+                              });
                         }
                       });
                 },

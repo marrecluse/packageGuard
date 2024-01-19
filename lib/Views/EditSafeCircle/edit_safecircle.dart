@@ -253,7 +253,7 @@ class _EditSafeCircleState extends State<EditSafeCircle> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     CustomText(
-                                      title: 'No Persons Yet',
+                                      title: 'No Members Yet',
                                       fontSize: 16,
                                     ),
                                     SizedBox(
@@ -319,15 +319,12 @@ class _EditSafeCircleState extends State<EditSafeCircle> {
                                                       radius: 27.r,
                                                       child: ClipOval(
                                                         child: Image.network(
-                                        user.userImage,
-                                        errorBuilder: (context, error,
-                                                stackTrace) =>
-                                            Icon(Icons
-                                                .person_2_outlined), // Use the network URL directly
-                                        height: 50.h,
-                                        width: 50.h,
-                                        fit: BoxFit.cover,
-                                      ),
+                                                          user.userImage
+                                                              .toString(), // Use the network URL directly
+                                                          height: 50.h,
+                                                          width: 50.h,
+                                                          fit: BoxFit.cover,
+                                                        ),
                                                       ),
                                                     ),
 
@@ -489,7 +486,7 @@ class _EditSafeCircleState extends State<EditSafeCircle> {
                             borderRadius: BorderRadius.circular(8.r)),
                         child: Center(
                           child: CustomText(
-                            title: "Add Safe Circle Person",
+                            title: "Add Safe Circle Member",
                             fontSize: 13.sp,
                             fontWeight: FontWeight.w500,
                             color: AppColors.btntext,

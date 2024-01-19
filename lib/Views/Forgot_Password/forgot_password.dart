@@ -1,3 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -57,8 +60,13 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                               fixedSize: Size(198.w, 40.h),
                               backgroundColor: AppColors.green),
                           onPressed: () {
-                            AppConstants.showCustomSnackBar(
-                                "OTP send on your email!");
+                            FirebaseAuth.instance
+                                .sendPasswordResetEmail(
+                                    email: emailController.text)
+                                .then((value) {
+                              AppConstants.showCustomSnackBar(
+                                  "OTP send on your email!");
+                            });
                           },
                           child: CustomText(
                             title: "Submit",

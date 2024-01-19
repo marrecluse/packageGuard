@@ -45,8 +45,8 @@ android {
         applicationId "com.example.packageguard"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
-        minSdkVersion 23
-        targetSdkVersion flutter.targetSdkVersion
+        minSdkVersion 21
+        targetSdkVersion 33
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         multiDexEnabled true
@@ -69,4 +69,6 @@ flutter {
 
 dependencies {
     implementation 'com.android.support:multidex:2.0.1'
+    implementation 'com.facebook.android:facebook-login:latest.release'
+
 }

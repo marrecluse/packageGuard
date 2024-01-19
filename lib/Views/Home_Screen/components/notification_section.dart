@@ -1,4 +1,4 @@
-// ignore_for_file: must_be_immutable, use_key_in_widget_constructors
+// ignore_for_file: must_be_immutable, use_key_in_widget_constructors, prefer_const_literals_to_create_immutables, prefer_const_constructors
 
 import 'dart:async';
 
@@ -218,9 +218,25 @@ class _NotificationSectionState extends State<NotificationSection> {
                     } else if (snapshot.hasError) {
                       return Text(
                           'Error: ${snapshot.error}'); // Show an error message
-                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      return Text(
-                          'No data available'); // Show a message when no data is available
+                    } else if (snapshot.hasData || snapshot.data!.isEmpty) {
+                      return Center(
+                        
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Row(
+                              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                    'No data available',
+                                    style: TextStyle(
+                                      fontFamily: 'Montserrat'
+                                    ),),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ); // Show a message when no data is available
                     } else {
                       // Data available - use ListView.builder here
                       print("filteredData ${snapshot.data}");

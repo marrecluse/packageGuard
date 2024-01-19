@@ -2,9 +2,9 @@ class AppImages {
   static String batteryloww = "assets/images/battery10.png";
   static String logo = "assets/images/logo.png";
   static String appbarImg = "assets/images/appbar image.png";
-  static String google = "assets/images/google.png";
+  static String google = "assets/images/google-logo.png";
   static String linkedin = "assets/images/linkedin.png";
-  static String facbook = "assets/images/facebook.png";
+  static String facebook = "assets/images/facebook_logo.png";
   static String profile = "assets/images/profile.png";
 
   static String appLogo = 'assets/images/appLogo.png';

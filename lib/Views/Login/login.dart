@@ -1,3 +1,5 @@
+// ignore_for_file: no_leading_underscores_for_local_identifiers, unused_local_variable
+
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -5,9 +7,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:get/get.dart';
+import 'package:packageguard/Utils/app_images.dart';
 import 'package:packageguard/Views/profile_image_service.dart';
 import 'package:sign_in_button/sign_in_button.dart';
 
@@ -51,9 +55,11 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SignIn> {
+  bool _isLoggedIn = false;
+  Map _userObj = {};
+
   String? googleUserImage;
   bool isLoading = false; // Initially, the button is not in loading state
-
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   String? deviceToken = '';
@@ -90,7 +96,11 @@ class _SignInState extends State<SignIn> {
     AlertDialog alert = AlertDialog(
       content: new Row(
         children: [
-          CircularProgressIndicator(backgroundColor: AppColors.navyblue,color: Colors.white,strokeWidth: 10,),
+          CircularProgressIndicator(
+            backgroundColor: AppColors.navyblue,
+            color: Colors.white,
+            strokeWidth: 10,
+          ),
           Container(margin: EdgeInsets.only(left: 5), child: Text("Loading")),
         ],
       ),
@@ -127,6 +137,7 @@ class _SignInState extends State<SignIn> {
   //     print(error);
   //   }
   // }
+
   Future<String?> uploadImageToFirebaseStorage(File imageFile) async {
     try {
       final Reference storageReference = FirebaseStorage.instance
@@ -144,6 +155,95 @@ class _SignInState extends State<SignIn> {
     }
   }
 
+  Future<void> _handleFacebookSignIn() async {
+    final userController = Get.find<UserController>();
+    final userUidController =
+        Get.find<UserUidController>(); // Get the controller
+    try {
+      final LoginResult result = await FacebookAuth.instance.login(
+    permissions: ['email', 'public_profile'],
+      
+      );
+      if (result.status == LoginStatus.success) {
+
+        print('Logged in using Facebook');
+        print('Result: }');
+
+        // Authenticate with Firebase using Facebook access token
+        final AuthCredential credential =
+            FacebookAuthProvider.credential(result.accessToken!.token);
+        final UserCredential userCredential =
+            await FirebaseAuth.instance.signInWithCredential(credential);
+
+//Get facebook user data
+
+        final fbUserData = await FacebookAuth.instance.getUserData(
+        fields: "name,email,picture.width(200)",
+        );
+        print('fb user: $fbUserData');
+// Console output for this:
+// fb user: {name: M Abdul Rehman, email: danijakhar11@gmail.com, picture: {data: {height: 201, is_silhouette: false, url: https://platform-lookaside.fbsbx.com/platform/profilepic/?asid=223327424169414&width=200&ext=1708236888&hash=Afq5k082PjQ__CY0Z2LY14sYhSxyRX6m4Y2thabxsUum-A, width: 200}}, id: 223327424169414}
+
+        final fb_uid = userCredential.user!.uid;
+        print('fb uid $fb_uid');
+
+// Extracting fb user data:
+
+        String fb_name = fbUserData['name'] ?? '';
+        String fb_email = fbUserData['email'] ?? '';
+
+        //for picture
+      final fb_pictureData = fbUserData['picture'];
+        String fb_picture = fb_pictureData['data']['url'] ?? '';
+
+        final fb_userData = {
+          'Name': fb_name,
+          'Email': fb_email,
+          'phoneNumber': '',
+          'Address': '',
+          'City': '',
+          'State': '',
+          'Cell phone': '',
+          'Zip code': '',
+          'deviceToken': deviceToken,
+          'Country': '',
+          'ProfileImage': fb_picture,
+          'uid': fb_uid,
+          'method': 'facebook'
+        };
+//make firestore user collection
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(fb_uid)
+            .set(fb_userData);
+
+//Store data in controller:
+
+        final userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(fb_uid)
+            .get();
+        if (userDoc.exists) {
+          final userData = userDoc.data();
+          userUidController.setUID(fb_uid);
+          userController.setUserData(userData!);
+        }
+        else{
+          debugPrint('fb UserDoc does not exists');
+        }
+
+        Get.offAll(() => const HomeScreen());
+
+
+
+      } else {
+        print('Login Failed');
+      }
+    } catch (e) {
+      print('Facebook Login exception: $e');
+    }
+  }
+
   Future<void> _handleGoogleSignIn() async {
     final auth = FirebaseAuth.instance;
     final firestore = FirebaseFirestore.instance; // Initialize Firestore
@@ -156,21 +256,20 @@ class _SignInState extends State<SignIn> {
       UserCredential userCredential =
           await _auth.signInWithProvider(_googleAuthProvider);
       User? user = userCredential.user!;
-AdditionalUserInfo? userProfile = userCredential.additionalUserInfo;
+      AdditionalUserInfo? userProfile = userCredential.additionalUserInfo;
 
-if (userProfile != null && userProfile.profile != null) {
-googleUserImage = userProfile.profile!['picture'] as String?;
-  
-  if (googleUserImage != null) {
-    print('Google User Image: $googleUserImage');
-    // Use googleUserImage where needed
-  } else {
-    print('Picture URL not found');
-  }
-} else {
-  print('Profile information not available');
-}
+      if (userProfile != null && userProfile.profile != null) {
+        googleUserImage = userProfile.profile!['picture'] as String?;
 
+        if (googleUserImage != null) {
+          print('Google User Image: $googleUserImage');
+          // Use googleUserImage where needed
+        } else {
+          print('Picture URL not found');
+        }
+      } else {
+        print('Profile information not available');
+      }
 
       await user?.updateProfile(displayName: user.displayName);
 
@@ -181,28 +280,25 @@ googleUserImage = userProfile.profile!['picture'] as String?;
       print("Google user: $user");
       print("GoogleUser Credentials: $userCredential");
 
-String? uName = user?.displayName;
-String? uEmail = user?.email;
-String? uPhoto = user?.photoURL;
+      String? uName = user?.displayName;
+      String? uEmail = user?.email;
+      String? uPhoto = user?.photoURL;
 
-if (uPhoto != null) {
-  print('Photo URL: $uPhoto');
-} else {
-  print('Photo URL not available');
-}
-if (uName != null) {
-  print('Google user name: $uName');
-} else {
-  print('Google user name not available');
-}
-if (uEmail != null) {
-  print('uEmail : $uEmail');
-} else {
-  print('uEmail not available');
-}
-
-
-
+      if (uPhoto != null) {
+        print('Photo URL: $uPhoto');
+      } else {
+        print('Photo URL not available');
+      }
+      if (uName != null) {
+        print('Google user name: $uName');
+      } else {
+        print('Google user name not available');
+      }
+      if (uEmail != null) {
+        print('uEmail : $uEmail');
+      } else {
+        print('uEmail not available');
+      }
 
       final userData = {
         'Name': user.displayName,
@@ -312,8 +408,7 @@ if (uEmail != null) {
       // Sign-in failed, handle the error here.
       print("Sign-in error: $e");
       setState(() {
-        isLoading=false;
-
+        isLoading = false;
       });
       // Example: Show an error snackbar with GetX.
       Get.snackbar(
@@ -386,50 +481,43 @@ if (uEmail != null) {
                       ),
                     ),
                     CustomSizeBox(height: 29.h),
-                            SizedBox(height: 12,),
-                    isLoading ?
-                    Center(child: CircularProgressIndicator(backgroundColor: AppColors.navyblue,color: Colors.white,strokeWidth: 10,)
-                    ) : SizedBox(),
-                    SizedBox(height: 10,),
-                    Center(
-                      child:ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                  fixedSize: Size(198.w,
-                                      context.screenWidth > 900 ? 80.h : 60.h),
-                                  backgroundColor: AppColors.green),
-                              onPressed: () async {
-                              setState(() {
-                                isLoading=true;
-                              });
-                          
-                              
-
-                                signIn();
-                                storeTheToken();
-                                getCredentials();
-
-                                // SharedPreferences pref =
-                                //     await SharedPreferences.getInstance();
-                                // pref.setString("email", emailController.text);
-                         
-                              },
-                              child: CustomText(
-                                title: "Submit",
-                                fontSize: 20.sp,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.btntext,
-                              )),
+                    SizedBox(
+                      height: 12,
                     ),
-            
-                  
-                    CustomSizeBox(height: 10.h),
+                    isLoading
+                        ? Center(
+                            child: CircularProgressIndicator(
+                            backgroundColor: AppColors.navyblue,
+                            color: Colors.white,
+                            strokeWidth: 10,
+                          ))
+                        : SizedBox(),
+                    SizedBox(
+                      height: 10,
+                    ),
                     Center(
+                      child: TextButton(
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(AppColors.green),
+                        ),
+                        onPressed: () async {
+                          setState(() {
+                            isLoading = true;
+                          });
+                          signIn();
+                          storeTheToken();
+                          getCredentials();
+                        },
                         child: CustomText(
-                      title: "or",
-                      fontSize: 13.sp,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.black,
-                    )),
+                          title: "Submit",
+                          fontSize: 20.sp,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.btntext,
+                        ),
+                      ),
+                    ),
+                    CustomSizeBox(height: 10.h),
                     CustomSizeBox(height: 10.h),
                     GestureDetector(
                       onTap: () {
@@ -443,18 +531,102 @@ if (uEmail != null) {
                         color: AppColors.black,
                       )),
                     ),
+                    _isLoggedIn
+                        ? Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(_userObj["name"] ?? ''),
+                              Text(_userObj["email"] ?? ''),
+                              TextButton(
+                                  onPressed: () {
+                                    FacebookAuth.instance
+                                        .logOut()
+                                        .then((value) {
+                                      setState(() {
+                                        _isLoggedIn = false;
+                                        _userObj = {};
+                                      });
+                                    });
+                                  },
+                                  child: Text("Logout"))
+                            ],
+                          )
+                        : SizedBox(),
                     SizedBox(
-                      height: context.screenWidth * 0.3,
+                      height: context.screenWidth * 0.09,
                     ),
                     Center(
-                        child:
-                            SignInButton(Buttons.google, onPressed: () async {
-                      _handleGoogleSignIn();
+                        child: CustomText(
+                      title: "or",
+                      fontSize: 13.sp,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.black,
+                    )),
+                    Center(
+                        child: CustomText(
+                      title: "Login with:",
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.black,
+                    )),
+                    SizedBox(
+                      height: 10.0,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Center(
+                          child: GestureDetector(
+                            onTap: () async {
+                              _handleGoogleSignIn();
 
-                      SharedPreferences pref =
-                          await SharedPreferences.getInstance();
-                      pref.setString("email", _user!.email!);
-                    })),
+                              SharedPreferences pref =
+                                  await SharedPreferences.getInstance();
+                              pref.setString("email", _user!.email!);
+                            },
+                            child: Container(
+                                child: Image.asset(
+                              AppImages.google,
+                              height: 40.sp,
+                              width: 40.sp,
+                            )),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 30.0,
+                        ),
+                        Center(
+                          child: GestureDetector(
+                            onTap: () async {
+                              _handleFacebookSignIn();
+                              // FacebookAuth.instance.login(permissions: [
+                              //   "public_profile",
+                              //   "email"
+                              // ]).then((value) {
+                              //   FacebookAuth.instance
+                              //       .getUserData()
+                              //       .then((userData) async {
+                              //     setState(() {
+                              //       _isLoggedIn = true;
+                              //       _userObj = userData;
+                              //     });
+                              //   });
+                              // });
+                            },
+                            child: Container(
+                                child: Image.asset(
+                              AppImages.facebook,
+                              height: 40.sp,
+                              width: 40.sp,
+                            )),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: context.screenWidth * 0.1,
+                    ),
                   ],
                 ),
               ),

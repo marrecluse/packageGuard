@@ -80,21 +80,21 @@ class MyApp extends StatelessWidget {
       designSize: const Size(393, 844),
       builder: (context, child) {
         return GetMaterialApp(
-          
+            
           debugShowCheckedModeBanner: false,
           title: "Place Packages",
-
+        
           home: SplashScreen(),
           initialBinding: BindingsBuilder(
             () {
               Get.lazyPut(() => WifiController());
               Get.lazyPut(() => UserController());
               Get.lazyPut(() => UserUidController());
-
+        
               // Get.lazyPut(() => BluetoothController());
               // Get.lazyPut(() => BluetoothControllerr());
               Get.put(ConnectedDevicesController());
-
+        
               Get.put(() => AnimationController);
             
             },

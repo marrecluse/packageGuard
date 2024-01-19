@@ -67,6 +67,9 @@ dependencies:
   geolocator: ^10.1.0
   flutter_switch: ^0.3.2
   cached_network_image: ^3.3.1
+  connectivity_plus: ^5.0.2
+  internet_connection_checker: ^1.0.0+1
+  flutter_facebook_auth: ^6.0.4
   
 
 

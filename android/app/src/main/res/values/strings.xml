@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Package Guard</string>
+    <string name="facebook_app_id">361509876631129</string>
+    <string name="facebook_client_token">694bece3029a3d0ba67d68977b597de6</string>
+    <string name="fb_login_protocol_scheme">fb361509876631129</string>
+</resources>

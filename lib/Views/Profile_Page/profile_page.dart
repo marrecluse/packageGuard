@@ -1,10 +1,13 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:velocity_x/velocity_x.dart';
 import '../../Utils/app_colors.dart';
 import '../../Utils/app_constants.dart';
 import '../../Utils/app_images.dart';
@@ -29,10 +32,9 @@ bool onoff2 = true;
 bool onoff3 = true;
 bool isLoader = false;
 
-
 class _ProfilePageState extends State<ProfilePage> {
   File? imageFile;
-
+  String imageUrl = '';
   getFromGallery() async {
     final ImagePicker _picker = ImagePicker();
     final pickedFile = await _picker.pickImage(
@@ -123,6 +125,9 @@ class _ProfilePageState extends State<ProfilePage> {
       }
 
       AppConstants.showCustomSnackBar("Profile Saved!");
+      Timer(Duration(seconds: 3), () {
+        Get.toNamed('/home');
+      });
 
       isLoader = false;
     } catch (e) {
@@ -355,15 +360,15 @@ class _ProfilePageState extends State<ProfilePage> {
                             AppConstants.showCustomSnackBar("Image uploaded");
                           },
                           child: Container(
-                            height: 35.h,
-                            width: 80.w,
+                            height: 40.h,
+                            width: 105.w,
                             decoration: BoxDecoration(
                                 color: AppColors.navyblue,
                                 borderRadius: BorderRadius.circular(5.r)),
                             child: Center(
                               child: CustomText(
                                 title: "Upload",
-                                fontSize: 13.sp,
+                                fontSize: 15.sp,
                                 fontWeight: FontWeight.w500,
                                 color: AppColors.btntext,
                               ),
@@ -374,13 +379,17 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
 
                     CustomSizeBox(height: 10.h),
+
                     Row(
                       children: [
-                        CustomText(
-                          title: "Enable text message",
-                          fontSize: 13.sp,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.black,
+                        Container(
+                          width: context.screenWidth *0.5,
+                          child: CustomText(
+                            title: "Enable text message",
+                            fontSize: 13.sp,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.black,
+                          ),
                         ),
                         const Spacer(),
                         Switch(
@@ -389,7 +398,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           onChanged: (value) {
                             setState(() {
                               onoff1 = !onoff1;
-                              pushAllowed=!pushAllowed;
+                              pushAllowed = !pushAllowed;
                             });
                           },
                         )
@@ -398,11 +407,15 @@ class _ProfilePageState extends State<ProfilePage> {
                     const Divider(thickness: 2),
                     Row(
                       children: [
-                        CustomText(
-                          title: "Enable push notification",
-                          fontSize: 13.sp,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.black,
+                        Container(
+                          width: context.screenWidth * 0.7,
+                          child: CustomText(
+                            title: "Enable push notification",
+                            fontSize: 13.sp,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.black,
+                            lines: 2,
+                          ),
                         ),
                         const Spacer(),
                         Switch(
@@ -419,11 +432,14 @@ class _ProfilePageState extends State<ProfilePage> {
                     const Divider(thickness: 2),
                     Row(
                       children: [
-                        CustomText(
-                          title: "Enable email notification",
-                          fontSize: 13.sp,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.black,
+                        Container(
+                          width: context.screenWidth * 0.7,
+                          child: CustomText(
+                            title: "Enable email notification",
+                            fontSize: 13.sp,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.black,
+                          ),
                         ),
                         const Spacer(),
                         Switch(
@@ -443,8 +459,12 @@ class _ProfilePageState extends State<ProfilePage> {
                         style: ElevatedButton.styleFrom(
                             fixedSize: Size(198.w, 40.h),
                             backgroundColor: AppColors.green),
-                        onPressed: () {
+                        onPressed: () async {
                           isLoader = !isLoader;
+                          if (imageFile != null) {
+                            imageUrl = (await uploadImageToFirebaseStorage(
+                                imageFile!))!;
+                          }
 
                           final updatedData = {
                             'Name': nameController.text,
@@ -456,6 +476,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             'State': statecontroller.text,
                             'Zip code': zipcontroller.text,
                             'Country': countrycontroller.text,
+
                             // Add other fields you want to update
                           };
 
@@ -480,6 +501,34 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
       ]),
     ));
+  }
+
+  Future<String?> uploadImageToFirebaseStorage(File imageFile) async {
+    try {
+      final Reference storageReference = FirebaseStorage.instance
+          .ref()
+          .child('profile_images')
+          .child('${DateTime.now().millisecondsSinceEpoch}.jpg');
+
+      final UploadTask uploadTask = storageReference.putFile(imageFile);
+      await uploadTask;
+      final String imageUrl = await storageReference.getDownloadURL();
+      updateImage(imageUrl.toString());
+      return imageUrl;
+    } catch (e) {
+      print('Error uploading image: $e');
+      return null;
+    }
+  }
+
+  void updateImage(String imageUrl) async {
+    final userUidController = Get.find<UserUidController>();
+    final uuid =
+        userUidController.uid.value; // Access the value inside RxString
+
+    await FirebaseFirestore.instance.collection('users').doc(uuid).update({
+      'ProfileImage': imageUrl,
+    });
   }
 
   Future<void> showOptionsDialog(BuildContext context) {
