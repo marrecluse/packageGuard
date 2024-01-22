@@ -69,7 +69,6 @@ class _DeviceDetailsState extends State<DeviceDetails>
   bool isArmed = false;
   bool testAlarm = false;
   void updateArmedStatus(bool isArmed, String deviceId) async {
-    String deviceId = 'SN83C048DF9D4'; //use variable when getting many devices
     DatabaseReference armedRef =
         FirebaseDatabase.instance.ref().child('status').child(deviceId);
     await armedRef.once();
@@ -109,9 +108,6 @@ class _DeviceDetailsState extends State<DeviceDetails>
     });
   }
 
-
-
-
   void updateVolume(int vol, String deviceId) async {
     // var deviceId= 'SN83C048DF9D4'; use variable when getting many devices
 
@@ -124,10 +120,6 @@ class _DeviceDetailsState extends State<DeviceDetails>
 
     await alarmRef.update({"volume": vol});
   }
-
-
-
-
 
   void updateTestAlarmStatus(bool alarm, String deviceId) async {
     // var deviceId= 'SN83C048DF9D4'; use variable when getting many devices
@@ -230,7 +222,6 @@ class _DeviceDetailsState extends State<DeviceDetails>
         _setVolumeValue = volume;
       });
     });
-
 
     userData = userController.userData as Map<String, dynamic>;
     print(userData);
@@ -339,9 +330,10 @@ class _DeviceDetailsState extends State<DeviceDetails>
                                               snapshot.data ?? 0;
 
                                           return CustomText(
+                                            lines: 2,
                                             title:
-                                                "$totalScaleAdded  ${totalScaleAdded == 1 ? 'Package' : 'Packages'}",
-                                            fontSize: 15.sp,
+                                                "$totalScaleAdded  ${totalScaleAdded > 1 ? 'Packages' : 'Package'}",
+                                            fontSize: 12.sp,
                                             fontWeight: FontWeight.w600,
                                             color: AppColors.navyblue,
                                           );
@@ -352,11 +344,15 @@ class _DeviceDetailsState extends State<DeviceDetails>
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
-                                      CustomText(
-                                        title: "Guarded to Date",
-                                        fontSize: 14.sp,
-                                        fontWeight: FontWeight.w400,
-                                        color: AppColors.black,
+                                      SizedBox(
+                                        width: 115,
+                                        child: CustomText(
+                                          lines: 2,
+                                          title: "Guarded to Date",
+                                          fontSize: 10.sp,
+                                          fontWeight: FontWeight.w400,
+                                          color: AppColors.black,
+                                        ),
                                       ),
                                       Image.asset(
                                         AppImages.box,
@@ -380,11 +376,10 @@ class _DeviceDetailsState extends State<DeviceDetails>
 
                                     updateTestAlarmStatus(
                                         testAlarm, widget.device);
-
                                   },
                                   child: Container(
                                     width: 169.w,
-                                    height: 41.h,
+                                  height: context.screenWidth * 0.15,
                                     decoration: ShapeDecoration(
                                       color: testAlarm
                                           ? Colors.red
@@ -407,15 +402,19 @@ class _DeviceDetailsState extends State<DeviceDetails>
                                             AppImages.alram,
                                           ),
                                           SizedBox(width: 10.w),
-                                          CustomText(
-                                            title: testAlarm
-                                                ? 'Beeping'
-                                                : 'Test Alarm',
-                                            fontSize: 13.sp,
-                                            fontWeight: FontWeight.w400,
-                                            color: testAlarm
-                                                ? Colors.white
-                                                : AppColors.white,
+                                          SizedBox(
+                                            width: 100,
+                                            child: CustomText(
+                                              lines: 2,
+                                              title: testAlarm
+                                                  ? 'Beeping'
+                                                  : 'Test Alarm',
+                                              fontSize: 11.sp,
+                                              fontWeight: FontWeight.w400,
+                                              color: testAlarm
+                                                  ? Colors.white
+                                                  : AppColors.white,
+                                            ),
                                           ),
                                         ],
                                       ),
@@ -425,7 +424,7 @@ class _DeviceDetailsState extends State<DeviceDetails>
                                 SizedBox(height: 15.h),
                                 Container(
                                   width: 200.w,
-                                  height: 41.h,
+                                  height: context.screenWidth * 0.15,
                                   decoration: ShapeDecoration(
                                     color: const Color(0xB515508D),
                                     shape: RoundedRectangleBorder(
@@ -442,42 +441,47 @@ class _DeviceDetailsState extends State<DeviceDetails>
                                     child: Padding(
                                       padding:
                                           EdgeInsets.symmetric(horizontal: 4.w),
-                                      child: testAlarm 
-                                      ? Slider(
-                                        value: _currentSliderValue,
-                                        max: 100,
-                                        activeColor: Colors.white,
-                                        divisions: 5,
-                                        label: _currentSliderValue
-                                            .round()
-                                            .toString(),
-                                        onChanged: (double value) {
-                                          setState(() {
-                                            _currentSliderValue = value;
-
-                                          });
-                                      updateVolume(
-                                        _currentSliderValue.round().toInt(), widget.device);
-                                        },
-                                      )
-                                       :
-                                      Row(
-                                        children: [
-                                          Image.asset(
-                                            height: 25.h,
-                                            AppImages.speaker,
-                                          ),
-                                          SizedBox(width: 10.w),
-                                          Expanded(
-                                            child: CustomText(
-                                              title: "Adjust Volume",
-                                              fontSize: 13.sp,
-                                              fontWeight: FontWeight.w400,
-                                              color: AppColors.white,
+                                      child: testAlarm
+                                          ? Slider(
+                                              value: _currentSliderValue,
+                                              max: 100,
+                                              activeColor: Colors.white,
+                                              divisions: 5,
+                                              label: _currentSliderValue
+                                                  .round()
+                                                  .toString(),
+                                              onChanged: (double value) {
+                                                setState(() {
+                                                  _currentSliderValue = value;
+                                                });
+                                                updateVolume(
+                                                    _currentSliderValue
+                                                        .round()
+                                                        .toInt(),
+                                                    widget.device);
+                                              },
+                                            )
+                                          : Row(
+                                              children: [
+                                                Image.asset(
+                                                  height: 25.h,
+                                                  AppImages.speaker,
+                                                ),
+                                                SizedBox(width: 10.w),
+                                                SizedBox(
+                                                  width: 100,
+                                                  child: CustomText(
+                                                    lines: 2,
+                                                    title: 'Adjust volume',
+                                                    fontSize: 11.sp,
+                                                    fontWeight: FontWeight.w400,
+                                                    color: testAlarm
+                                                        ? Colors.white
+                                                        : AppColors.white,
+                                                  ),
+                                                ),
+                                              ],
                                             ),
-                                          ),
-                                        ],
-                                      ),
                                     ),
                                   ),
                                 )
@@ -552,7 +556,11 @@ class _DeviceDetailsState extends State<DeviceDetails>
                                   }
                                 },
                                 child: Image.asset(
-   _trailImages[widget.alarmValue ? 2 : double.parse(widget.battery) <=20 ? 1: 0],
+                                  _trailImages[widget.alarmValue
+                                      ? 2
+                                      : double.parse(widget.battery) <= 20
+                                          ? 1
+                                          : 0],
                                   height: 41,
                                   width: 41,
                                 ),
@@ -560,7 +568,7 @@ class _DeviceDetailsState extends State<DeviceDetails>
                             ),
 
                             Container(
-                              height: 60,
+                                            height: 76,
                               width: MediaQuery.of(context).size.width,
                               padding: EdgeInsets.symmetric(
                                   horizontal: 10.w, vertical: 9.h),
@@ -664,7 +672,7 @@ class _DeviceDetailsState extends State<DeviceDetails>
                                         'armedStatus_$deviceId', value);
 
                                     updateArmedStatus(widget.armedStatusMap!,
-                                        deviceId); // Update armed status in the database
+                                        widget.device); // Update armed status in the database
                                   },
                                 ),
                               ],
@@ -687,12 +695,14 @@ class _DeviceDetailsState extends State<DeviceDetails>
                             child: Container(
                               //height: 30.h,
                               padding: EdgeInsets.symmetric(vertical: 15.h),
-                              width: 150.w,
+                              width: context.screenWidth*0.5,
                               decoration: BoxDecoration(
                                   color: AppColors.navyblue,
                                   borderRadius: BorderRadius.circular(8.r)),
                               child: Center(
                                 child: CustomText(
+                                  textAlign: TextAlign.center,
+                                  lines: 2,
                                   title: "See History",
                                   fontSize: 13.sp,
                                   fontWeight: FontWeight.w500,
@@ -709,7 +719,8 @@ class _DeviceDetailsState extends State<DeviceDetails>
                                   onTap: () {
                                     // AppConstants.showCustomSnackBar("Share!");
 
-                                    String appLink = 'https://play.google.com/store/apps/details?id=com.packageGuard&hl=en&gl=US';
+                                    String appLink =
+                                        'https://play.google.com/store/apps/details?id=com.packageGuard&hl=en&gl=US';
                                     Share.share(appLink,
                                         subject: 'Check out this app!');
                                   },
@@ -722,7 +733,8 @@ class _DeviceDetailsState extends State<DeviceDetails>
                                 GestureDetector(
                                     onTap: () {
                                       // AppConstants.showCustomSnackBar("Share!");
-                                      String appLink = 'https://play.google.com/store/apps/details?id=com.packageGuard&hl=en&gl=US';
+                                      String appLink =
+                                          'https://play.google.com/store/apps/details?id=com.packageGuard&hl=en&gl=US';
                                       Share.share(appLink,
                                           subject: 'Check out this app!');
                                     },

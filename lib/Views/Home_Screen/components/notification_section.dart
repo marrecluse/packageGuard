@@ -54,7 +54,7 @@ class _NotificationSectionState extends State<NotificationSection> {
 
       // Query to get documents where alertType is equal to 'ALERT_SCALEADDED'
       return alertsCollection
-          .doc(userController.userData['uid']) // Specific document ID
+          .doc('L1la98MXx5Qv99dMvqvOKUaSWkH2') // Specific document ID
           .collection('alertsLog') // Subcollection
           .where('alertType', isEqualTo: 'ALERT_SCALEADDED')
           .snapshots()
@@ -218,7 +218,7 @@ class _NotificationSectionState extends State<NotificationSection> {
                     } else if (snapshot.hasError) {
                       return Text(
                           'Error: ${snapshot.error}'); // Show an error message
-                    } else if (snapshot.hasData || snapshot.data!.isEmpty) {
+                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                       return Center(
                         
                         child: Column(
@@ -239,7 +239,7 @@ class _NotificationSectionState extends State<NotificationSection> {
                       ); // Show a message when no data is available
                     } else {
                       // Data available - use ListView.builder here
-                      print("filteredData ${snapshot.data}");
+                      print("filteredData:: ${snapshot.data}");
                       return ListView.builder(
                         
                           itemCount:snapshot.data!.length,

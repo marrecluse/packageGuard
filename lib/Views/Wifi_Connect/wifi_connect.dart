@@ -342,7 +342,7 @@ class _WifiConnectState extends State<WifiConnect> {
     print('the value is  $wifiTitle');
     // connectedDevice = bluetoothController.connectedDevice.value;
     // characteristic = bluetoothController.characteristic.value;
-    if(Platform.isIOS){
+    if (Platform.isIOS) {
       void buildShowDialog(BuildContext context, String deviceIdentifier) {
         showDialog(
           context: context,
@@ -351,8 +351,8 @@ class _WifiConnectState extends State<WifiConnect> {
               insetPadding: EdgeInsets.symmetric(
                 horizontal: 17.w,
               ),
-              shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12.r)),
               child: Container(
                 padding: EdgeInsets.symmetric(
                   horizontal: 14.w,
@@ -420,13 +420,13 @@ class _WifiConnectState extends State<WifiConnect> {
                             fontSize: 14.sp,
                           ),
                         ),
-
                         GestureDetector(
                           onTap: () async {
                             // Check if both SSID and password controllers have non-empty values
                             if (_ssidController.text.isNotEmpty &&
                                 _passwordController.text.isNotEmpty) {
-                              print("My SSID: ${_ssidController.text.toString()}");
+                              print(
+                                  "My SSID: ${_ssidController.text.toString()}");
                               print(
                                   "My PASS: ${_passwordController.text.toString()}");
 
@@ -440,7 +440,6 @@ class _WifiConnectState extends State<WifiConnect> {
                               try {
                                 await widget.deviceChar
                                     .write(data, allowLongWrite: true);
-
                               } catch (e) {
                                 print('Data sent failed due to: $e');
                               }
@@ -469,7 +468,7 @@ class _WifiConnectState extends State<WifiConnect> {
                           child: Container(
                             // height: 30.h,
                             padding: EdgeInsets.symmetric(vertical: 10.h),
-                            width: 80.w,
+                            width: 120.w,
                             decoration: BoxDecoration(
                                 color: AppColors.navyblue,
                                 borderRadius: BorderRadius.circular(8.r)),
@@ -597,13 +596,17 @@ class _WifiConnectState extends State<WifiConnect> {
                                                       SizedBox(
                                                         width: 8.w,
                                                       ),
-                                                      CustomText(
-                                                        title:
-                                                            wifiTitle![index],
-                                                        fontSize: 12.sp,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        color: AppColors.black,
+                                                      SizedBox(
+                                                        width: 200,
+                                                        child: CustomText(
+                                                          title:
+                                                              wifiTitle![index],
+                                                          fontSize: 12.sp,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          color:
+                                                              AppColors.black,
+                                                        ),
                                                       ),
                                                     ],
                                                   ),
@@ -750,6 +753,7 @@ class _WifiConnectState extends State<WifiConnect> {
                     hintStyle: TextStyle(fontSize: 12.sp),
                   ),
                 ),
+                
                 TextFormField(
                   controller: _passwordController,
                   obscureText: isPasswordVisible,
@@ -763,9 +767,9 @@ class _WifiConnectState extends State<WifiConnect> {
                     Checkbox(
                       activeColor: AppColors.navyblue,
                       value: isPasswordVisible,
-                      onChanged: (bool? value) {
+                      onChanged: (value) {
                         setState(() {
-                          isPasswordVisible = !isPasswordVisible;
+                          isPasswordVisible = value ?? false;
                         });
                       },
                     ),
@@ -794,7 +798,6 @@ class _WifiConnectState extends State<WifiConnect> {
                         fontSize: 14.sp,
                       ),
                     ),
-                    
                     GestureDetector(
                       onTap: () async {
                         // Check if both SSID and password controllers have non-empty values
@@ -806,19 +809,18 @@ class _WifiConnectState extends State<WifiConnect> {
 
                           String ssid = _ssidController.text.toString();
                           String pass = _passwordController.text.toString();
-                        
+
                           String wifiCred =
                               "$ssid,$pass,${userData['uid']},${userData['Email']},${userData['Name']}";
                           print("My EMAIL: ${userData['Email']}");
                           List<int> data = wifiCred.codeUnits;
                           try {
-                             await widget.deviceChar
-                              .write(data, allowLongWrite: true);
-
+                            await widget.deviceChar
+                                .write(data, allowLongWrite: true);
                           } catch (e) {
                             print('Data sent failed due to: $e');
                           }
-                         
+
                           AppConstants.showCustomSnackBar("data sent");
 
                           Navigator.pop(context);
@@ -843,7 +845,7 @@ class _WifiConnectState extends State<WifiConnect> {
                       child: Container(
                         // height: 30.h,
                         padding: EdgeInsets.symmetric(vertical: 10.h),
-                        width: 80.w,
+                        width: 120.w,
                         decoration: BoxDecoration(
                             color: AppColors.navyblue,
                             borderRadius: BorderRadius.circular(8.r)),

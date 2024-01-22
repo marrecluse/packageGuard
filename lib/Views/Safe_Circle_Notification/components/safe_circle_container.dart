@@ -9,9 +9,13 @@ class SafeCircleContainer extends StatelessWidget {
   Color titleColor;
   Color containerColor;
   String leadingImg;
+  String userName='';
+  String userAddress='';
 
   SafeCircleContainer({
     super.key,
+    required this.userName,
+    required this.userAddress,
     required this.titleText,
     required this.subTitleText,
     required this.leadingImg,
@@ -37,24 +41,28 @@ class SafeCircleContainer extends StatelessWidget {
             width: 20.w,
           ),
           Container(
-            width: 180.w,
+            width: 280.w,
             child: Column(
               children: [
                 CustomText(
+                  lines:4,
                   title: titleText,
                   fontSize: 12.sp,
                   fontWeight: FontWeight.w700,
                   color: titleColor,
                 ),
-                CustomText(
-                  title: subTitleText,
-                  //     textAlign: TextAlign.center,
-                  fontSize: 10.sp,
-                  fontWeight: FontWeight.w500,
+                SizedBox(
+                  child: CustomText(
+                    lines: 4,
+                    title: subTitleText,
+                    //     textAlign: TextAlign.center,
+                    fontSize: 10.sp,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
                 SizedBox(height: 10.h),
                 CustomText(
-                  title: 'Fiasals House',
+                  title: "$userName's House",
                   fontSize: 10.sp,
                   fontWeight: FontWeight.w700,
                   color: const Color(0xff15508D),
@@ -62,7 +70,7 @@ class SafeCircleContainer extends StatelessWidget {
                 SizedBox(
                   child: Center(
                     child: CustomText(
-                      title: ' Bahawalpur Road st # 4 multan',
+                      title: userAddress,
                       fontSize: 9.sp,
                       fontWeight: FontWeight.w400,
                     ),

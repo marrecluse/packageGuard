@@ -164,7 +164,7 @@ try {
         backgroundColor: Colors.red,
       );
     } else {
-      return FloatingActionButton(child: CustomText(title: 'SCAN',fontWeight: FontWeight.bold), onPressed: onScanPressed);
+      return FloatingActionButton(child: Icon(Icons.search), onPressed: onScanPressed);
     }
   }
 
@@ -206,7 +206,7 @@ try {
         appBar: 
         AppBar(
           backgroundColor: AppColors.navyblue,
-          title: CustomText(title: 'Find Devices',fontWeight: FontWeight.bold,fontSize: 21,),
+          title: CustomText(title: 'Find Devices',fontWeight: FontWeight.bold,fontSize: 21,color: Platform.isIOS ? Colors.white : Colors.white,),
         ),
         body: RefreshIndicator(
           onRefresh: onRefresh,

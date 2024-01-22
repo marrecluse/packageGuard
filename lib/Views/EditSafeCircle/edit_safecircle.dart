@@ -472,7 +472,6 @@ class _EditSafeCircleState extends State<EditSafeCircle> {
                               ),
                       ),
                     ),
-                    SizedBox(height: 30.h),
                     GestureDetector(
                       onTap: () {
                         Get.to(() => const AddSafePerson());
@@ -486,7 +485,7 @@ class _EditSafeCircleState extends State<EditSafeCircle> {
                             borderRadius: BorderRadius.circular(8.r)),
                         child: Center(
                           child: CustomText(
-                            title: "Add Safe Circle Member",
+                            title: "Add Safe Circle Members",
                             fontSize: 13.sp,
                             fontWeight: FontWeight.w500,
                             color: AppColors.btntext,

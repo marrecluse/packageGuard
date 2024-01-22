@@ -22,6 +22,7 @@ class CustomAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<String> titleName = title.split(' ');
+    print("Title last: ${titleName.last} Name: $title");
 
     return Stack(
       children: [
@@ -60,6 +61,7 @@ class CustomAppBar extends StatelessWidget {
                                 child: userData['method'] == 'emailAndPass'
                                     ? Image.network(
                                         image.toString(),
+                                        
                                         errorBuilder: (context, error,
                                                 stackTrace) =>
                                             Icon(Icons
@@ -96,21 +98,22 @@ class CustomAppBar extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 CustomText(
+                                  style: FontStyle.italic,
                                   title: "Welcome",
                                   fontSize: 11.sp,
-                                  fontWeight: FontWeight.w500,
+                                  
                                   color: AppColors.white,
                                 ),
                                 SizedBox(height: 0.5.w),
                                 SizedBox(
-                                  child: SizedBox(
-                                    width: context.screenWidth * .61,
-                                    child: CustomText(
-                                      title: titleName[0],
-                                      fontSize: 14.sp,
-                                      fontWeight: FontWeight.w700,
-                                      color: AppColors.white,
-                                    ),
+                                  width:85,
+                                  child: CustomText(
+                                    lines: 2,
+                                    title: title.length > 16 ? titleName.first : title,
+                                    fontSize:
+                                        title.length > 13 ? 9.sp : 15.sp,
+                                    fontWeight: FontWeight.w700,
+                                    color: AppColors.white,
                                   ),
                                 ),
                               ])

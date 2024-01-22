@@ -39,10 +39,6 @@ class _SafeNOtificationsAlerts2State extends State<SafeNOtificationsAlerts2> {
     // TODO: implement initState
     super.initState();
     // Start the timer when the widget initializes
-    _timer = Timer.periodic(Duration(seconds: 2), (Timer t) {
-      // Call setState to rebuild the widget
-      setState(() {});
-    });
 
     fetchSafeCircleNotification();
     clearNotificationList();
@@ -102,10 +98,13 @@ class _SafeNOtificationsAlerts2State extends State<SafeNOtificationsAlerts2> {
   }
 
   Stream<List<Map<String, dynamic>>> streamNotifications() {
+    User? currentUser = FirebaseAuth.instance.currentUser;
+    String currentUser_uid = currentUser!.uid;
+    print('uid: $currentUser_uid');
     Stream<List<Map<String, dynamic>>> theftAlertNotificationsStream =
         FirebaseFirestore.instance
             .collection('alerts')
-            .doc(user!.uid)
+            .doc(currentUser_uid)
             .collection('alertsLog')
             .where("alertType", isEqualTo: "ALARM_SCALEREMOVED")
             .snapshots()
@@ -114,7 +113,7 @@ class _SafeNOtificationsAlerts2State extends State<SafeNOtificationsAlerts2> {
     Stream<List<Map<String, dynamic>>> addRequestNotificationsStream =
         FirebaseFirestore.instance
             .collection('notifications')
-            .doc(user!.uid)
+            .doc(currentUser_uid)
             .collection('safeCircleNotification')
             .where('userId', isEqualTo: user?.uid.toString())
             .snapshots()
@@ -290,7 +289,8 @@ class _SafeNOtificationsAlerts2State extends State<SafeNOtificationsAlerts2> {
           //     }),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 12),
-            child: notificationList == null || notificationList.isEmpty
+            // child: notificationList == null || notificationList.isEmpty
+            child: false
                 ? Column(
                     children: [
                       Center(
@@ -432,6 +432,9 @@ class _SafeNOtificationsAlerts2State extends State<SafeNOtificationsAlerts2> {
                               return Center(
                                 child: Text('Error: ${snapshot.error}'),
                               );
+                            } else if (!snapshot.hasData) {
+                              print('No data in snapshot');
+                              return Text('No data ');
                             } else {
                               List<Map<String, dynamic>> notifications =
                                   snapshot.data ?? [];
@@ -439,6 +442,7 @@ class _SafeNOtificationsAlerts2State extends State<SafeNOtificationsAlerts2> {
                               notifications =
                                   removeDuplicates(notifications, 'deviceId');
                               print("Notification list : ${notifications}");
+
                               return FutureBuilder<List<Map<String, dynamic>>>(
                                   future: getUserData(notifications
                                       .map((e) => e['deviceId'] as String)
@@ -452,30 +456,30 @@ class _SafeNOtificationsAlerts2State extends State<SafeNOtificationsAlerts2> {
                                     } else {
                                       List<Map<String, dynamic>> userDataList =
                                           userSnapshot.data ?? [];
-                                      print("userData: $userDataList");
-                                      return ListView.builder(
-                                          itemCount: notifications.length,
-                                          itemBuilder: (context, index) {
-                                            // Access individual notification data here
-                                            Map<String, dynamic>
-                                                notification =
-                                                notifications[index];
-                                            String documentId = notification[
-                                                'documentId']; // Replace with your field name
-                                            print(
-                                                "document id: $documentId");
-                                            return SafeCircleContainer(
-                                              titleText:
-                                                  'PACKAGE THEFT ALERT',
-                                              subTitleText:
-                                                  'A package is being retrieved without authorization at:',
-                                              leadingImg: AppImages.redIcon,
-                                              containerColor:
-                                                  const Color(0xffC58888),
-                                              titleColor:
-                                                  const Color(0xffCE3333),
-                                            );
-                                          });
+                                      print(
+                                          "userData and Device details: $userDataList");
+                                          String? userName = userDataList.isNotEmpty ? userDataList.first["Name"] : null;
+String userAddress=userDataList.isNotEmpty ? userDataList.first["Address"] : null;
+                                      return Column(
+                                        children: [
+
+                                          notifications[0]['alertValue']
+                                              ? SafeCircleContainer(
+                                                userName: userName ?? '',
+                                                userAddress: userAddress,
+                                                  titleText:
+                                                      'PACKAGE THEFT ALERT',
+                                                  subTitleText:
+                                                      'A package is being retrieved without authorization at:',
+                                                  leadingImg: AppImages.redIcon,
+                                                  containerColor:
+                                                      const Color(0xffC58888),
+                                                  titleColor:
+                                                      const Color(0xffCE3333),
+                                                )
+                                              : SizedBox(),
+                                        ],
+                                      );
                                     }
                                   });
                             }

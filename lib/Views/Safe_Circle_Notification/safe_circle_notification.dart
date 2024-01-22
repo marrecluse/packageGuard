@@ -44,6 +44,7 @@ final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = GlobalKey<RefreshI
 
     setState(() {
       initState();
+
     });
   }
 

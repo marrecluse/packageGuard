@@ -14,7 +14,10 @@ import '../../Utils/app_images.dart';
 import '../Login/login.dart';
 
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key});
+ final String? storedEmail;
+  final String? storedPassword;
+
+  const SplashScreen({Key? key, this.storedEmail, this.storedPassword}) : super(key: key);
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
@@ -34,6 +37,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     isLogin(context);
+    // isSaved();
 
     // Timer(
     //   const Duration(seconds: 3),
@@ -44,6 +48,18 @@ class _SplashScreenState extends State<SplashScreen> {
     //   },
     // );
   }
+
+
+void isSaved(){
+if (widget.storedEmail != null && widget.storedPassword != null) {
+            Get.offAll(() => HomeScreen());
+
+}
+else{
+      Get.offAll(() => SignIn());
+
+}  
+}
 
   void isLogin(BuildContext context) {
     final auth = FirebaseAuth.instance;
@@ -86,6 +102,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+  
     return SafeArea(
         child: Scaffold(
       body: Container(

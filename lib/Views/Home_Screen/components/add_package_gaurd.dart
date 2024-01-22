@@ -443,7 +443,7 @@ class _AddPackageGaurdState extends State<AddPackageGaurd>
                                           ),
 
                                           Container(
-                                            height: 60,
+                                            height: 78,
                                             width: MediaQuery.of(context)
                                                 .size
                                                 .width,

@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -29,19 +31,15 @@ class _AddPackageGuardState extends State<AddPackageGuard> {
   Map<String, dynamic> userData = {};
   List<Map<String, dynamic>> devices = [];
 
-final Uri _url = Uri.parse('https://www.thepackageguard.com/');
+  final Uri _url = Uri.parse('https://www.thepackageguard.com/');
 
-
-
-
-Future<void> _launchUrl() async {
-  try {
-    await launchUrl(_url);
-  } catch (e) {
-    print(e);
+  Future<void> _launchUrl() async {
+    try {
+      await launchUrl(_url);
+    } catch (e) {
+      print(e);
+    }
   }
-}
-
 
   @override
   void initState() {
@@ -83,12 +81,12 @@ Future<void> _launchUrl() async {
                   SizedBox(
                     width: 358.w,
                     height: 152.h,
-                    child: Stack(
+                    child: Column(
                       children: [
                         Container(
                           width: 358.w,
-                          height: 49.h,
-                          padding: EdgeInsets.symmetric(horizontal: 20.w),
+                          height: 125.h,
+                          padding: EdgeInsets.symmetric(horizontal: 10.w),
                           decoration: ShapeDecoration(
                             color: const Color(0x2B15508D),
                             shape: RoundedRectangleBorder(
@@ -117,31 +115,37 @@ Future<void> _launchUrl() async {
                                 ),
                               ),
                               SizedBox(width: 15.w),
-                              CustomText(
-                                title:
-                                    'Press the RESET button on the \n bottom of the unit TWICE',
-                                fontSize: 12.sp,
-                                color: AppColors.black,
-                                fontWeight: FontWeight.w400,
+                              SizedBox(
+                                width: context.screenWidth * 0.65,
+                                child: Tooltip(
+                                  message:
+                                      'Press the RESET button on the bottom of the unit TWICE.',
+                                  child: CustomText(
+                                    lines: 7,
+                                    title:
+                                        'Press the RESET button on the bottom of the unit TWICE.',
+                                    fontSize: 12.sp,
+                                    color: AppColors.black,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
                               ),
                             ],
                           ),
                         ),
-                        Positioned(
-                          top: 30,
-                          left: 150,
-                          child: Image.asset(
-                            AppImages.guard,
-                            height: 120.h,
-                          ),
-                        )
                       ],
+                    ),
+                  ),
+                  Center(
+                    child: Image.asset(
+                      AppImages.guard,
+                      height: 120.h,
                     ),
                   ),
                   Container(
                     width: 358.w,
-                    height: 49.h,
-                    padding: EdgeInsets.symmetric(horizontal: 20.w),
+                    height: 85.h,
+                    padding: EdgeInsets.symmetric(horizontal: 10.w),
                     decoration: ShapeDecoration(
                       color: const Color(0x2B15508D),
                       shape: RoundedRectangleBorder(
@@ -170,12 +174,16 @@ Future<void> _launchUrl() async {
                           ),
                         ),
                         SizedBox(width: 15.w),
-                        CustomText(
-                          title:
-                              'Wait as the app connects with the\n unit via Bluetooth',
-                          fontSize: 12.sp,
-                          color: AppColors.black,
-                          fontWeight: FontWeight.w400,
+                        SizedBox(
+                          width: context.screenWidth * 0.65,
+                          child: CustomText(
+                            lines: 4,
+                            title:
+                                'Wait as the app connects with the unit via Bluetooth.',
+                            fontSize: 12.sp,
+                            color: AppColors.black,
+                            fontWeight: FontWeight.w400,
+                          ),
                         ),
                       ],
                     ),
@@ -183,10 +191,10 @@ Future<void> _launchUrl() async {
                   SizedBox(height: 20.h),
                   Container(
                     width: 358.w,
-      
+
                     //  height: 49.h,
                     padding:
-                        EdgeInsets.symmetric(horizontal: 20.w, vertical: 6.h),
+                        EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
                     decoration: ShapeDecoration(
                       color: const Color(0x2B15508D),
                       shape: RoundedRectangleBorder(
@@ -228,29 +236,33 @@ Future<void> _launchUrl() async {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             SizedBox(
-                              width: 260.w,
-                              height: 70.h,
+                              width: context.screenWidth * 0.65,
+                              height: 100.h,
                               child: CustomText(
+                                lines: 7,
                                 title:
-                                    'Receive a READY notification. \nCheck your list of devices.\n\nFor troubleshooting, go to:',
-                                fontSize: 12.sp,
+                                    'Receive a READY notification. Check your list of devices.For troubleshooting, go to:',
+                                fontSize: 11.sp,
                                 color: AppColors.black,
                                 fontWeight: FontWeight.w400,
                               ),
                             ),
                             SizedBox(height: 2.h),
-      
-                          GestureDetector(
-                            onTap: (){
-                              print('Going to url');
-                              _launchUrl();
-                            },
-                              child: CustomText(
-                                title: 'www.thepackageguard.com',
-                                fontSize: 12.sp,
-                                color: AppColors.navyblue,
-                                fontWeight: FontWeight.w400,
-                                decoration: TextDecoration.underline,
+                            GestureDetector(
+                              onTap: () {
+                                print('Going to url');
+                                _launchUrl();
+                              },
+                              child: SizedBox(
+                                width: 270,
+                                child: CustomText(
+                                  lines: 2,
+                                  title: 'www.thepackageguard.com',
+                                  fontSize: 10.sp,
+                                  color: Colors.blue,
+                                  fontWeight: FontWeight.w400,
+                                  decoration: TextDecoration.underline,
+                                ),
                               ),
                             ),
                           ],
@@ -258,7 +270,7 @@ Future<void> _launchUrl() async {
                       ],
                     ),
                   ),
-                  CustomSizeBox(height: 150.h),
+SizedBox(height: 70.h,),
                   GestureDetector(
                     onTap: () {
                       Get.to(() => const OrderPackage());
@@ -280,6 +292,10 @@ Future<void> _launchUrl() async {
                       ),
                     ),
                   ),
+
+
+                  SizedBox(height: 70.h,),
+
                 ],
               ),
             )

@@ -8,5 +8,6 @@
   "files.watcherExclude": {
     "**/.fvm": true
   },
-  "cmake.sourceDirectory": "/home/abdul/softthrive/task3/packageGuard/linux/flutter"
+  "cmake.sourceDirectory": "/home/abdul/softthrive/task3/packageGuard/linux/flutter",
+  "workbench.editor.decorations.colors": true
 }

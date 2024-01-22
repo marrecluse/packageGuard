@@ -9,6 +9,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:get/get.dart';
 import 'package:packageguard/Utils/app_images.dart';
@@ -114,29 +115,6 @@ class _SignInState extends State<SignIn> {
     );
   }
 
-  // void _handleGoogleSignIn() async {
-  //   final firestore = FirebaseFirestore.instance; // Initialize Firestore
-  //   final userController = Get.find<UserController>(); // Get the controller
-  //   final userUidController =
-  //       Get.find<UserUidController>(); // Get the controller
-
-  //   try {
-  //     GoogleAuthProvider _googleAuthProvider = GoogleAuthProvider();
-  //     UserCredential userCredential =
-  //         await _auth.signInWithProvider(_googleAuthProvider);
-  //     User? user = userCredential.user;
-  //     await firestore.collection('users').doc(user?.uid).update({
-  //       'deviceToken': deviceToken,
-  //     });
-
-  //     Get.toNamed(
-  //       '/home',
-  //       arguments: userCredential,
-  //     );
-  //   } catch (error) {
-  //     print(error);
-  //   }
-  // }
 
   Future<String?> uploadImageToFirebaseStorage(File imageFile) async {
     try {
@@ -178,11 +156,14 @@ class _SignInState extends State<SignIn> {
 //Get facebook user data
 
         final fbUserData = await FacebookAuth.instance.getUserData(
+          
         fields: "name,email,picture.width(200)",
         );
         print('fb user: $fbUserData');
 // Console output for this:
 // fb user: {name: M Abdul Rehman, email: danijakhar11@gmail.com, picture: {data: {height: 201, is_silhouette: false, url: https://platform-lookaside.fbsbx.com/platform/profilepic/?asid=223327424169414&width=200&ext=1708236888&hash=Afq5k082PjQ__CY0Z2LY14sYhSxyRX6m4Y2thabxsUum-A, width: 200}}, id: 223327424169414}
+
+
 
         final fb_uid = userCredential.user!.uid;
         print('fb uid $fb_uid');
@@ -191,10 +172,14 @@ class _SignInState extends State<SignIn> {
 
         String fb_name = fbUserData['name'] ?? '';
         String fb_email = fbUserData['email'] ?? '';
+        // String fb_id = fbUserData['id'] ?? '';
+        // String fb_picHeight = fbUserData['picture']['data']['height'] ?? '';
+        // String fb_picWidth = fbUserData['picture']['data']['width'] ?? '';
 
         //for picture
       final fb_pictureData = fbUserData['picture'];
         String fb_picture = fb_pictureData['data']['url'] ?? '';
+        // String fb_picture = 'http://graph.facebook.com/$fb_id/picture?type=large&redirect=true&width=$fb_picWidth&height=$fb_picHeight';
 
         final fb_userData = {
           'Name': fb_name,
@@ -357,6 +342,15 @@ class _SignInState extends State<SignIn> {
     }
   }
 
+Future<void> saveUserCredentials(String email, String password) async {
+  final storage = FlutterSecureStorage();
+  await storage.write(key: 'email', value: email);
+  await storage.write(key: 'password', value: password);
+  
+}
+
+
+
   Future<void> signIn() async {
     final auth = FirebaseAuth.instance;
     final firestore = FirebaseFirestore.instance; // Initialize Firestore
@@ -374,6 +368,7 @@ class _SignInState extends State<SignIn> {
       print("user credentials: $userCredential");
       User? user = userCredential.user;
       print("user is: $user");
+await saveUserCredentials(emailController.text, passwordController.text);
 
       await firestore.collection('users').doc(user?.uid).update({
         'deviceToken': deviceToken,
@@ -600,19 +595,6 @@ class _SignInState extends State<SignIn> {
                           child: GestureDetector(
                             onTap: () async {
                               _handleFacebookSignIn();
-                              // FacebookAuth.instance.login(permissions: [
-                              //   "public_profile",
-                              //   "email"
-                              // ]).then((value) {
-                              //   FacebookAuth.instance
-                              //       .getUserData()
-                              //       .then((userData) async {
-                              //     setState(() {
-                              //       _isLoggedIn = true;
-                              //       _userObj = userData;
-                              //     });
-                              //   });
-                              // });
                             },
                             child: Container(
                                 child: Image.asset(

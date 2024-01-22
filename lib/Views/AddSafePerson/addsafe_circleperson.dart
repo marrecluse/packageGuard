@@ -720,12 +720,17 @@ class _AddSafePersonState extends State<AddSafePerson> {
                           AppImages.vector,
                           height: 120.h,
                         ),
-                        CustomText(
-                          title:
-                              'Join your neighbor’s Safe Circle\nand have them join yours. The\nwhole street then becomes\npackage guardians.',
-                          fontSize: 10.sp,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w500,
+                        SizedBox(width: 10,),
+                        SizedBox(
+                          width: 180,
+                          child: CustomText(
+                            lines: 8,
+                            title:
+                                'Join your neighbor’s Safe Circleand have them join yours. Thewhole street then becomes package guardians.',
+                            fontSize: 10.sp,
+                            color: Colors.black,
+                            fontWeight: FontWeight.w500,
+                          ),
                         )
                       ],
                     ),
@@ -862,7 +867,7 @@ class _AddSafePersonState extends State<AddSafePerson> {
                               },
                               child: Container(
                                 height: 35.h,
-                                width: 80.w,
+                                width: 100.w,
                                 decoration: BoxDecoration(
                                     color: AppColors.navyblue,
                                     borderRadius: BorderRadius.circular(5.r)),
@@ -878,6 +883,7 @@ class _AddSafePersonState extends State<AddSafePerson> {
                             ),
                           ],
                         ),
+                        SizedBox(height: 10,),
                         Align(
                           alignment: Alignment.topRight,
                           child: GestureDetector(

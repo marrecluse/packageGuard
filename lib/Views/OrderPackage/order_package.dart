@@ -74,16 +74,18 @@ class _OrderPackageState extends State<OrderPackage> {
                           SizedBox(height: 10.h),
                           SizedBox(
                             width: 400.w,
-                            height: 70.h,
+                            height: 120.h,
                             child: CustomText(
+                              lines: 4,
                               title: "Secure your Package Guard today!",
-                              fontSize: 20.sp,
+                              fontSize: 17.sp,
                               color: AppColors.navyblue,
                               fontWeight: FontWeight.bold,
                               textAlign: TextAlign.start,
                             ),
                           ),
                           CustomText(
+                            lines: 4,
                             title:
                                 "Get your Package Guard today, you receive 20% off.",
                             fontSize: 14.sp,
@@ -101,17 +103,20 @@ class _OrderPackageState extends State<OrderPackage> {
                             child: Align(
                               alignment: Alignment.topLeft,
                               child: Container(
-                                height: 40.h,
-                                width: 180.w,
+                                height: 50.h,
+                                width: 250.w,
                                 decoration: BoxDecoration(
                                     color: AppColors.navyblue,
                                     borderRadius: BorderRadius.circular(8.r)),
                                 child: Center(
                                   child: CustomText(
+
                                     title: "Scan with Bluetooth",
-                                    fontSize: 13.sp,
+                                    fontSize: 11.sp,
+                                  
                                     fontWeight: FontWeight.w500,
                                     color: AppColors.white,
+                                    
                                     textAlign: TextAlign.left,
                                   ),
                                 ),

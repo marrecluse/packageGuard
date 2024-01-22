@@ -1,9 +1,10 @@
 // ignore_for_file: unused_import
 
-
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:get/get_navigation/get_navigation.dart';
 import 'package:http/http.dart';
@@ -38,6 +39,15 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Check if stored credentials exist
+  final storage = FlutterSecureStorage();
+  final storedEmail = await storage.read(key: 'email');
+  final storedPassword = await storage.read(key: 'password');
+
+  SystemChrome.setPreferredOrientations(
+      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+
   SharedPreferences prefs = await SharedPreferences.getInstance();
   var email = prefs.getString("email");
   print(email);
@@ -57,22 +67,22 @@ Future<void> main() async {
   // );
   // await pushNotification().initNotifications();
 
-
-
   // await FirebaseMessaging.instance.getInitialMessage();
   // FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-
 
   // FirebaseMessaging.instance.getToken().then((fcmToken) {
   //   print("FCM Token: $fcmToken");
   // });
 
   //  FirebaseAppCheck.instance.activate(webRecaptchaSiteKey: 'YOUR_RECAPTCHA_SITE_KEY');
-  runApp(const MyApp());
+  runApp(MyApp(storedEmail: storedEmail, storedPassword: storedPassword));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+ final String? storedEmail;
+  final String? storedPassword;
+
+  const MyApp({Key? key, this.storedEmail, this.storedPassword}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -80,41 +90,25 @@ class MyApp extends StatelessWidget {
       designSize: const Size(393, 844),
       builder: (context, child) {
         return GetMaterialApp(
-            
           debugShowCheckedModeBanner: false,
           title: "Place Packages",
-        
-          home: SplashScreen(),
+          home: SplashScreen(storedEmail: storedEmail, storedPassword: storedPassword),
           initialBinding: BindingsBuilder(
             () {
               Get.lazyPut(() => WifiController());
               Get.lazyPut(() => UserController());
               Get.lazyPut(() => UserUidController());
-        
+
               // Get.lazyPut(() => BluetoothController());
               // Get.lazyPut(() => BluetoothControllerr());
               Get.put(ConnectedDevicesController());
-        
+
               Get.put(() => AnimationController);
-            
             },
           ),
-          
           getPages: [GetPage(name: '/home', page: () => HomeScreen())],
         );
       },
     );
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:velocity_x/velocity_x.dart';
 
 // ignore: must_be_immutable
 class CustomText extends StatelessWidget {
@@ -10,12 +11,14 @@ class CustomText extends StatelessWidget {
   Color? color;
   TextAlign? textAlign;
   TextDecoration? decoration;
+  FontStyle? style;
   
 
   CustomText(
       {required this.title,
       this.fontSize,
       this.lines=1,
+      this.style,
       this.fontWeight,
       this.color,
       this.textAlign,
@@ -25,11 +28,14 @@ class CustomText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(
+
       title,
       textAlign: textAlign,
       softWrap: true,
       maxLines: lines,
+      overflow: TextOverflow.ellipsis,
       style: TextStyle(
+          fontStyle: style,
           fontFamily: 'Montserrat',
           fontSize: fontSize,
           fontWeight: fontWeight,

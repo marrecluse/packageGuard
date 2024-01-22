@@ -361,7 +361,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           },
                           child: Container(
                             height: 40.h,
-                            width: 105.w,
+                            width: 115.w,
                             decoration: BoxDecoration(
                                 color: AppColors.navyblue,
                                 borderRadius: BorderRadius.circular(5.r)),
