@@ -2,54 +2,38 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-
-
 <key>CFBundleURLTypes</key>
 <array>
   <dict>
   <key>CFBundleURLSchemes</key>
   <array>
-    <string>fb1393075937976223</string>
+    <string>fb361509876631129</string>
   </array>
   </dict>
 </array>
 <key>FacebookAppID</key>
-<string>1393075937976223</string>
+<string>361509876631129</string>
 <key>FacebookClientToken</key>
-<string>4cce30a506003a30f5906a1f3a06cf1f</string>
+<string>694bece3029a3d0ba67d68977b597de6</string>
 <key>FacebookDisplayName</key>
 <string>Package Guard</string>
-
-
-
-
-
-
-
-
-	<key>LSApplicationQueriesSchemes</key>
+<key>CFBundleURLTypes</key>
 	<array>
-  	<string>sms</string>
-  	<string>tel</string>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.455925042294-kiifiguc18qaj3j07gi3gqt3doepav4h</string>
+			</array>
+		</dict>
 	</array>
-	<key>NSBluetoothAlwaysUsageDescription</key>
-    <string>This app always needs Bluetooth to function</string>
-    <key>NSBluetoothPeripheralUsageDescription</key>
-
-	<string>Wifi Scan</string>
-	<key>CFBundleExecutable</key>
-    
-	<string>This app needs Bluetooth Peripheral to function</string>
-    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-    <string>This app always needs location and when in use to function</string>
-    <key>NSLocationAlwaysUsageDescription</key>
-    <string>This app always needs location to function</string>
-    <key>NSLocationWhenInUseUsageDescription</key>
-    <string>This app needs location when in use to function</string>
-	<key>UIBackgroundModes</key>
-	<array>
-    <string>bluetooth-central</string>
-	</array>
+<key>GIDClientID</key>
+	<string>455925042294-kiifiguc18qaj3j07gi3gqt3doepav4h.apps.googleusercontent.com</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>Give permission for upload profile image</string>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
@@ -57,7 +41,7 @@
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
-	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<string>com.thepackageguard.app</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -70,12 +54,35 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>sms</string>
+		<string>tel</string>
+	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>This app always needs Bluetooth to function</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>Wifi Scan</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>This app always needs location and when in use to function</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>This app always needs location to function</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This app needs location when in use to function</string>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>bluetooth-central</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
+	<key>UIRequiresPersistentWiFi</key>
+	<string>Application uses Wi-Fi</string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
@@ -89,9 +96,5 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<key>CADisableMinimumFrameDurationOnPhone</key>
-	<true/>
-	<key>UIApplicationSupportsIndirectInputEvents</key>
-	<true/>
 </dict>
 </plist>
