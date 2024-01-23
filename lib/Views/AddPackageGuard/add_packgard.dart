@@ -85,8 +85,8 @@ class _AddPackageGuardState extends State<AddPackageGuard> {
                       children: [
                         Container(
                           width: 358.w,
-                          height: 125.h,
-                          padding: EdgeInsets.symmetric(horizontal: 10.w),
+                        
+                          padding: EdgeInsets.symmetric(horizontal: 10.w,vertical: 10.h),
                           decoration: ShapeDecoration(
                             color: const Color(0x2B15508D),
                             shape: RoundedRectangleBorder(
@@ -96,6 +96,7 @@ class _AddPackageGuardState extends State<AddPackageGuard> {
                             ),
                           ),
                           child: Row(
+                            
                             children: [
                               Container(
                                 width: 39.w,
@@ -142,50 +143,51 @@ class _AddPackageGuardState extends State<AddPackageGuard> {
                       height: 120.h,
                     ),
                   ),
-                  Container(
-                    width: 358.w,
-                    height: 85.h,
-                    padding: EdgeInsets.symmetric(horizontal: 10.w),
-                    decoration: ShapeDecoration(
-                      color: const Color(0x2B15508D),
-                      shape: RoundedRectangleBorder(
-                        side: BorderSide(
-                            width: 1.w, color: const Color(0x7F15508D)),
-                        borderRadius: BorderRadius.circular(9.r),
+                  FittedBox(
+                    child: Container(
+                      width: 358.w,
+                      padding: EdgeInsets.symmetric(horizontal: 10.w,vertical: 10.h),
+                      decoration: ShapeDecoration(
+                        color: const Color(0x2B15508D),
+                        shape: RoundedRectangleBorder(
+                          side: BorderSide(
+                              width: 1.w, color: const Color(0x7F15508D)),
+                          borderRadius: BorderRadius.circular(9.r),
+                        ),
                       ),
-                    ),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 39.w,
-                          height: 37.h,
-                          decoration: ShapeDecoration(
-                            color: const Color(0xB515508D),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(9.r)),
-                          ),
-                          child: Center(
-                            child: CustomText(
-                              title: '2',
-                              fontSize: 15.sp,
-                              color: AppColors.white,
-                              fontWeight: FontWeight.w600,
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 39.w,
+                            height: 37.h,
+                            decoration: ShapeDecoration(
+                              color: const Color(0xB515508D),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(9.r)),
+                            ),
+                            child: Center(
+                              child: CustomText(
+                                title: '2',
+                                fontSize: 15.sp,
+                                color: AppColors.white,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ),
-                        ),
-                        SizedBox(width: 15.w),
-                        SizedBox(
-                          width: context.screenWidth * 0.65,
-                          child: CustomText(
-                            lines: 4,
-                            title:
-                                'Wait as the app connects with the unit via Bluetooth.',
-                            fontSize: 12.sp,
-                            color: AppColors.black,
-                            fontWeight: FontWeight.w400,
+                          SizedBox(width: 15.w),
+                          SizedBox(
+                            width: context.screenWidth * 0.65,
+                            child: CustomText(
+                              lines: 4,
+                              title:
+                                  'Wait as the app connects with the unit via Bluetooth.',
+                              fontSize: 12.sp,
+                              color: AppColors.black,
+                              fontWeight: FontWeight.w400,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                   SizedBox(height: 20.h),
@@ -237,7 +239,6 @@ class _AddPackageGuardState extends State<AddPackageGuard> {
                           children: [
                             SizedBox(
                               width: context.screenWidth * 0.65,
-                              height: 100.h,
                               child: CustomText(
                                 lines: 7,
                                 title:

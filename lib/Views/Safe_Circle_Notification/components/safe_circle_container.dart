@@ -14,8 +14,8 @@ class SafeCircleContainer extends StatelessWidget {
 
   SafeCircleContainer({
     super.key,
-    required this.userName,
-    required this.userAddress,
+     this.userName='',
+     this.userAddress='',
     required this.titleText,
     required this.subTitleText,
     required this.leadingImg,

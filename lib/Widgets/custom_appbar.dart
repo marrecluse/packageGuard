@@ -136,13 +136,13 @@ class CustomAppBar extends StatelessWidget {
           ),
         ),
         Positioned(
-            top: 42.h,
+            top: 60.h,
             left: -50.w,
             right: -50.w,
             child: Center(
               child: Image.asset(
                 AppImages.logo,
-                height: 120.h,
+                height: 100.h,
               ),
             ))
       ],

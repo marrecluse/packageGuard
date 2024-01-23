@@ -130,7 +130,6 @@ class _DeviceAlertsDataState extends State<DeviceAlertsData> {
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 15.h),
-      height: 520.h,
       width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(9.r),

@@ -432,9 +432,15 @@ class _SafeNOtificationsAlerts2State extends State<SafeNOtificationsAlerts2> {
                               return Center(
                                 child: Text('Error: ${snapshot.error}'),
                               );
-                            } else if (!snapshot.hasData) {
+                            // } else if (!snapshot.hasData) {
+                            } else if (true) {
                               print('No data in snapshot');
-                              return Text('No data ');
+                              return Text('No data ',style: TextStyle(
+                                
+          fontFamily: 'Montserrat',
+                                ),
+                                )
+                                ;
                             } else {
                               List<Map<String, dynamic>> notifications =
                                   snapshot.data ?? [];
@@ -458,15 +464,19 @@ class _SafeNOtificationsAlerts2State extends State<SafeNOtificationsAlerts2> {
                                           userSnapshot.data ?? [];
                                       print(
                                           "userData and Device details: $userDataList");
-                                          String? userName = userDataList.isNotEmpty ? userDataList.first["Name"] : null;
-String userAddress=userDataList.isNotEmpty ? userDataList.first["Address"] : null;
+                                      String? userName = userDataList.isNotEmpty
+                                          ? userDataList.first["Name"]
+                                          : '';
+                                      String userAddress =
+                                          userDataList.isNotEmpty
+                                              ? userDataList.first["Address"]
+                                              : '';
                                       return Column(
                                         children: [
-
                                           notifications[0]['alertValue']
                                               ? SafeCircleContainer(
-                                                userName: userName ?? '',
-                                                userAddress: userAddress,
+                                                  userName: userName ?? '',
+                                                  userAddress: userAddress,
                                                   titleText:
                                                       'PACKAGE THEFT ALERT',
                                                   subTitleText:

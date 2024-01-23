@@ -465,6 +465,7 @@ class _SafeNOtificationsAlerts2State extends State<SafeNOtificationsAlerts2> {
                                             print(
                                                 "document id: $documentId");
                                             return SafeCircleContainer(
+                                              
                                               titleText:
                                                   'PACKAGE THEFT ALERT',
                                               subTitleText:

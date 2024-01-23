@@ -385,6 +385,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         Container(
                           width: context.screenWidth *0.5,
                           child: CustomText(
+                            lines: 2,
                             title: "Enable text message",
                             fontSize: 13.sp,
                             fontWeight: FontWeight.w700,
@@ -435,6 +436,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         Container(
                           width: context.screenWidth * 0.7,
                           child: CustomText(
+                            lines: 2,
                             title: "Enable email notification",
                             fontSize: 13.sp,
                             fontWeight: FontWeight.w700,

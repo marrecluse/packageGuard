@@ -73,6 +73,7 @@ class _SignInState extends State<SignIn> {
   User? _user;
 
   GoogleSignIn googleSignIn = GoogleSignIn(
+    clientId: '455925042294-kiifiguc18qaj3j07gi3gqt3doepav4h.apps.googleusercontent.com',
     scopes: [
       'email',
       'https://www.googleapis.com/auth/contacts.readonly',

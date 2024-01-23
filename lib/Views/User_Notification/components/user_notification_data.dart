@@ -105,7 +105,6 @@ class _UserNotificationDataState extends State<UserNotificationData> {
 
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 15.h),
-      height: 520.h,
       width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(9.r),
@@ -198,7 +197,7 @@ Map notificationTitles= allDocuments[index].data() as Map;
                                               color: const Color(0xff3D3C3C),
                                               fontWeight: FontWeight.w600,),
                                   trailing: CustomText(
-                                    title:'${timestamp.toDate()}',
+                                    title:'${timestamp.toDate().toString().substring(0,12)}',
                                     fontSize: 10.sp,
                                     
                                     ),
